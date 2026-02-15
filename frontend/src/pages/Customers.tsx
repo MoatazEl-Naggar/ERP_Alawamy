@@ -14,6 +14,7 @@ import {
   TableBody,
   Paper
 } from "@mui/material";
+import { useTranslation } from "react-i18next";
 
 interface Customer {
   id?: string;
@@ -66,23 +67,24 @@ export default function Customers() {
     await api.delete(`/customers/${id}`);
     fetchCustomers();
   };
+  const { t } = useTranslation();
 
   return (
     <Paper sx={{ p: 3 }}>
-      <h2>Customers</h2>
+      <h2>{t("customersTitle")}</h2>
 
       <Button variant="contained" onClick={() => setOpen(true)} sx={{ mb: 2 }}>
-        Add Customer
+        {t("addCustomer")}
       </Button>
 
       <Table>
         <TableHead>
           <TableRow>
-            <TableCell>Number</TableCell>
-            <TableCell>Name</TableCell>
-            <TableCell>Phone</TableCell>
-            <TableCell>Email</TableCell>
-            <TableCell>Actions</TableCell>
+            <TableCell>{t("number")}</TableCell>
+            <TableCell>{t("name")}</TableCell>
+            <TableCell>{t("phone")}</TableCell>
+            <TableCell>{t("email")}</TableCell>
+            <TableCell>{t("actions")}</TableCell>
           </TableRow>
         </TableHead>
         <TableBody>
@@ -93,8 +95,8 @@ export default function Customers() {
               <TableCell>{c.phone}</TableCell>
               <TableCell>{c.email}</TableCell>
               <TableCell>
-                <Button onClick={() => handleEdit(c)}>Edit</Button>
-                <Button color="error" onClick={() => handleDelete(c.id!)}>Delete</Button>
+                <Button onClick={() => handleEdit(c)}>{t("edit")}</Button>
+                <Button color="error" onClick={() => handleDelete(c.id!)}>{t("delete")}</Button>
               </TableCell>
             </TableRow>
           ))}
@@ -103,45 +105,45 @@ export default function Customers() {
 
       {/* Add/Edit Dialog */}
       <Dialog open={open} onClose={() => setOpen(false)} fullWidth>
-        <DialogTitle>{form.id ? "Edit Customer" : "Add Customer"}</DialogTitle>
+        <DialogTitle>{form.id ? t("editCustomer") : t("addCustomer")}</DialogTitle>
         <DialogContent>
           <TextField
-            label="Customer Number"
+            label={t("customerNumber")}
             fullWidth
             margin="dense"
             value={form.customerNumber}
             onChange={e => setForm({ ...form, customerNumber: e.target.value })}
           />
           <TextField
-            label="Name"
+            label={t("name")}
             fullWidth
             margin="dense"
             value={form.name}
             onChange={e => setForm({ ...form, name: e.target.value })}
           />
           <TextField
-            label="Phone"
+            label={t("phone")}
             fullWidth
             margin="dense"
             value={form.phone}
             onChange={e => setForm({ ...form, phone: e.target.value })}
           />
           <TextField
-            label="Address"
+            label={t("address")}
             fullWidth
             margin="dense"
             value={form.address}
             onChange={e => setForm({ ...form, address: e.target.value })}
           />
           <TextField
-            label="Email"
+            label={t("email")}
             fullWidth
             margin="dense"
             value={form.email}
             onChange={e => setForm({ ...form, email: e.target.value })}
           />
           <TextField
-            label="Account Number"
+            label={t("accountNumber")}
             fullWidth
             margin="dense"
             value={form.accountNumber}
@@ -149,8 +151,8 @@ export default function Customers() {
           />
         </DialogContent>
         <DialogActions>
-          <Button onClick={() => setOpen(false)}>Cancel</Button>
-          <Button variant="contained" onClick={handleSave}>Save</Button>
+          <Button onClick={() => setOpen(false)}>{t("cancel")}</Button>
+          <Button variant="contained" onClick={handleSave}>{t("save")}</Button>
         </DialogActions>
       </Dialog>
     </Paper>

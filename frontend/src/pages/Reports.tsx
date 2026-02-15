@@ -14,11 +14,12 @@ import {
   TableCell,
   TableBody
 } from "@mui/material";
+import { useTranslation } from "react-i18next";
 
 export default function Reports() {
   const [start, setStart] = useState("");
   const [end, setEnd] = useState("");
-
+  const { t } = useTranslation();
   const [cashFlow, setCashFlow] = useState<any>(null);
   const [expenses, setExpenses] = useState<any[]>([]);
   const [treasury, setTreasury] = useState<any>(null);
@@ -37,19 +38,19 @@ export default function Reports() {
 
   return (
     <Paper sx={{ p: 3 }}>
-      <h2>Financial Reports</h2>
+      <h2>{t("reportsTitle")}</h2>
 
       {/* Date Filters */}
       <Grid container spacing={2} sx={{ mb: 3 }}>
         <Grid item xs={12} md={4}>
-          <TextField type="date" fullWidth label="Start Date" InputLabelProps={{ shrink: true }} onChange={e => setStart(e.target.value)} />
+          <TextField type="date" fullWidth label={t("startDate")} InputLabelProps={{ shrink: true }} onChange={e => setStart(e.target.value)} />
         </Grid>
         <Grid item xs={12} md={4}>
-          <TextField type="date" fullWidth label="End Date" InputLabelProps={{ shrink: true }} onChange={e => setEnd(e.target.value)} />
+          <TextField type="date" fullWidth label={t("endDate")} InputLabelProps={{ shrink: true }} onChange={e => setEnd(e.target.value)} />
         </Grid>
         <Grid item xs={12} md={4}>
           <Button variant="contained" fullWidth sx={{ height: "56px" }} onClick={loadReports}>
-            Load Reports
+            {t("loadReports")}
           </Button>
         </Grid>
       </Grid>
@@ -59,19 +60,19 @@ export default function Reports() {
         <Grid container spacing={2} sx={{ mb: 3 }}>
           <Grid item xs={12} md={4}>
             <Card><CardContent>
-              <Typography variant="h6">Total Cash In</Typography>
+              <Typography variant="h6">{t("totalCashIn")}</Typography>
               <Typography variant="h5">{cashFlow.totalIn.toLocaleString()}</Typography>
             </CardContent></Card>
           </Grid>
           <Grid item xs={12} md={4}>
             <Card><CardContent>
-              <Typography variant="h6">Total Cash Out</Typography>
+              <Typography variant="h6">{t("totalCashOut")}</Typography>
               <Typography variant="h5">{cashFlow.totalOut.toLocaleString()}</Typography>
             </CardContent></Card>
           </Grid>
           <Grid item xs={12} md={4}>
             <Card><CardContent>
-              <Typography variant="h6">Net Balance</Typography>
+              <Typography variant="h6">{t("netBalance")}</Typography>
               <Typography variant="h5">{cashFlow.net.toLocaleString()}</Typography>
             </CardContent></Card>
           </Grid>
@@ -81,12 +82,12 @@ export default function Reports() {
       {/* Expense Summary */}
       {expenses.length > 0 && (
         <>
-          <h3>Expense Summary</h3>
+          <h3>{t("expenseSummary")}</h3>
           <Table sx={{ mb: 3 }}>
             <TableHead>
               <TableRow>
-                <TableCell>Category ID</TableCell>
-                <TableCell>Total Spent</TableCell>
+                <TableCell>{t("categoryID")}</TableCell>
+                <TableCell>{t("totalSpent")}</TableCell>
               </TableRow>
             </TableHead>
             <TableBody>
@@ -104,15 +105,15 @@ export default function Reports() {
       {/* Treasury Movements */}
       {treasury && (
         <>
-          <h3>Treasury Movements</h3>
+          <h3>{t("treasuryMovements")}</h3>
 
-          <h4>Receipts</h4>
+          <h4>{t("receipts")}</h4>
           <Table sx={{ mb: 2 }}>
             <TableHead>
               <TableRow>
-                <TableCell>Voucher</TableCell>
-                <TableCell>Treasury</TableCell>
-                <TableCell>Amount</TableCell>
+                <TableCell>{t("voucher")}</TableCell>
+                <TableCell>{t("treasury")}</TableCell>
+                <TableCell>{t("amount")}</TableCell>
               </TableRow>
             </TableHead>
             <TableBody>
@@ -126,14 +127,14 @@ export default function Reports() {
             </TableBody>
           </Table>
 
-          <h4>Payments</h4>
+          <h4>{t("payments")}</h4>
           <Table>
             <TableHead>
               <TableRow>
-                <TableCell>Voucher</TableCell>
-                <TableCell>Treasury</TableCell>
-                <TableCell>Amount</TableCell>
-                <TableCell>Expense</TableCell>
+                <TableCell>{t("voucher")}</TableCell>
+                <TableCell>{t("treasury")}</TableCell>
+                <TableCell>{t("amount")}</TableCell>
+                <TableCell>{t("expense")}</TableCell>
               </TableRow>
             </TableHead>
             <TableBody>

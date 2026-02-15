@@ -14,7 +14,7 @@ import {
   TableBody,
   Paper
 } from "@mui/material";
-
+import { useTranslation } from "react-i18next";
 export default function Receiving() {
   const [receivings, setReceivings] = useState<any[]>([]);
   const [purchases, setPurchases] = useState<any[]>([]);
@@ -64,6 +64,8 @@ export default function Receiving() {
     setSelectedPurchaseItems(updated);
   };
 
+  const { t } = useTranslation();
+
   const handleSave = async () => {
     await api.post("/receiving", { ...form, items: selectedPurchaseItems });
     setOpen(false);
@@ -72,19 +74,19 @@ export default function Receiving() {
 
   return (
     <Paper sx={{ p: 3 }}>
-      <h2>Receiving Invoices</h2>
+      <h2>{t("receivingTitle")}</h2>
 
       <Button variant="contained" onClick={() => setOpen(true)} sx={{ mb: 2 }}>
-        New Receiving
+        {t("newReceiving")}
       </Button>
 
       <Table>
         <TableHead>
           <TableRow>
-            <TableCell>Invoice #</TableCell>
-            <TableCell>Date</TableCell>
-            <TableCell>Purchase Ref</TableCell>
-            <TableCell>Items</TableCell>
+            <TableCell>{t("invoiceNumber")}</TableCell>
+            <TableCell>{t("date")}</TableCell>
+            <TableCell>{t("purchaseRef")}</TableCell>
+            <TableCell>{t("items")}</TableCell>
           </TableRow>
         </TableHead>
         <TableBody>
@@ -100,15 +102,16 @@ export default function Receiving() {
       </Table>
 
       <Dialog open={open} onClose={() => setOpen(false)} fullWidth maxWidth="md">
-        <DialogTitle>New Receiving</DialogTitle>
+        <DialogTitle>{t("newReceiving")}</DialogTitle>
         <DialogContent>
           <TextField
-            label="Receiving Number"
+            label={t("receivingNumber")}
             fullWidth
             margin="dense"
             onChange={e => setForm({ ...form, invoiceNumber: e.target.value })}
           />
           <TextField
+            label={t("date")}
             type="date"
             fullWidth
             margin="dense"
@@ -118,7 +121,7 @@ export default function Receiving() {
           <TextField
             select
             SelectProps={{ native: true }}
-            label="Purchase Invoice"
+            label={t("purchaseInvoice")}
             fullWidth
             margin="dense"
             onChange={e => handlePurchaseSelect(e.target.value)}
@@ -129,21 +132,21 @@ export default function Receiving() {
             ))}
           </TextField>
 
-          <h4>Received Items</h4>
+          <h4>{t("receivedItems")}</h4>
           {selectedPurchaseItems.map((item, index) => (
             <div key={index} style={{ marginBottom: 10 }}>
               <TextField
-                label="Received Cartons"
+                label={t("receivedCartons")}
                 type="number"
                 onChange={e => handleItemChange(index, "receivedCartons", +e.target.value)}
               />
               <TextField
-                label="Received Units"
+                label={t("receivedUnits")}
                 type="number"
                 onChange={e => handleItemChange(index, "receivedUnits", +e.target.value)}
               />
               <TextField
-                label="Damaged Units"
+                label={t("damagedUnits")}
                 type="number"
                 onChange={e => handleItemChange(index, "damagedUnits", +e.target.value)}
               />
@@ -151,7 +154,7 @@ export default function Receiving() {
           ))}
 
           <TextField
-            label="Notes"
+            label={t("notes")}
             fullWidth
             margin="dense"
             multiline
@@ -160,8 +163,8 @@ export default function Receiving() {
           />
         </DialogContent>
         <DialogActions>
-          <Button onClick={() => setOpen(false)}>Cancel</Button>
-          <Button variant="contained" onClick={handleSave}>Save</Button>
+          <Button onClick={() => setOpen(false)}>{t("cancel")}</Button>
+          <Button variant="contained" onClick={handleSave}>{t("save")}</Button>
         </DialogActions>
       </Dialog>
     </Paper>

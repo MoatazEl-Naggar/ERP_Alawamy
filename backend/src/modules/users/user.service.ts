@@ -30,6 +30,22 @@ export const toggleUserStatus = async (userId: string, isActive: boolean) => {
   });
 };
 
+export const getUsers = async () => {
+  return prisma.user.findMany({
+    select: {
+      id: true,
+      username: true,
+      role: true,
+      isActive: true,
+      createdAt: true
+    },
+    orderBy: {
+      createdAt: "desc"
+    }
+  });
+};
+
+
 export const assignPermissions = async (userId: string, permissions: any[]) => {
   await prisma.permission.deleteMany({ where: { userId } });
 

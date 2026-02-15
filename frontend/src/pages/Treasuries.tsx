@@ -14,6 +14,7 @@ import {
   TableBody,
   Paper
 } from "@mui/material";
+import { useTranslation } from "react-i18next";
 
 interface Treasury {
   id: string;
@@ -25,7 +26,7 @@ export default function Treasuries() {
   const [treasuries, setTreasuries] = useState<Treasury[]>([]);
   const [open, setOpen] = useState(false);
   const [name, setName] = useState("");
-
+  const { t } = useTranslation();
   const fetchTreasuries = async () => {
     const res = await api.get("/treasuries");
     setTreasuries(res.data);
@@ -44,17 +45,17 @@ export default function Treasuries() {
 
   return (
     <Paper sx={{ p: 3 }}>
-      <h2>Treasuries</h2>
+      <h2>{t("treasuriesTitle")}</h2>
 
       <Button variant="contained" onClick={() => setOpen(true)} sx={{ mb: 2 }}>
-        Add Treasury
+        {t("addTreasury")}
       </Button>
 
       <Table>
         <TableHead>
           <TableRow>
-            <TableCell>Treasury Name</TableCell>
-            <TableCell>Balance</TableCell>
+            <TableCell>{t("treasuryName")}</TableCell>
+            <TableCell>{t("balance")}</TableCell>
           </TableRow>
         </TableHead>
         <TableBody>
@@ -68,10 +69,10 @@ export default function Treasuries() {
       </Table>
 
       <Dialog open={open} onClose={() => setOpen(false)}>
-        <DialogTitle>New Treasury</DialogTitle>
+        <DialogTitle>{t("newTreasury")}</DialogTitle>
         <DialogContent>
           <TextField
-            label="Treasury Name"
+            label={t("treasuryName")}
             fullWidth
             margin="dense"
             value={name}
@@ -79,8 +80,8 @@ export default function Treasuries() {
           />
         </DialogContent>
         <DialogActions>
-          <Button onClick={() => setOpen(false)}>Cancel</Button>
-          <Button variant="contained" onClick={handleSave}>Save</Button>
+          <Button onClick={() => setOpen(false)}>{t("cancel")}</Button>
+          <Button variant="contained" onClick={handleSave}>{t("save")}</Button>
         </DialogActions>
       </Dialog>
     </Paper>

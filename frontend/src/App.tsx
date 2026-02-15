@@ -1,5 +1,6 @@
-import { Routes, Route, Navigate } from "react-router-dom";
-import { AuthProvider } from "./auth/AuthContext";
+import { Routes, Route, Navigate, Outlet } from "react-router-dom";
+import { AuthProvider, useAuth } from "./auth/AuthContext";
+
 import Layout from "./components/Layout";
 import Login from "./pages/Login";
 import Dashboard from "./pages/Dashboard";
@@ -12,33 +13,68 @@ import Treasuries from "./pages/Treasuries";
 import Expenses from "./pages/Expenses";
 import Inventory from "./pages/Inventory";
 import Reports from "./pages/Reports";
+import Users from "./pages/Users";
+
+/* ================= PRIVATE ROUTE ================= */
+
+function PrivateRoute() {
+  const { user } = useAuth();
+  return user ? <Outlet /> : <Navigate to="/login" replace />;
+}
+
+/* ================= ADMIN ROUTE ================= */
+
+function AdminRoute() {
+  const { user } = useAuth();
+  return user?.role === "ADMIN"
+    ? <Outlet />
+    : <Navigate to="/dashboard" replace />;
+}
+
+/* ================= APP ================= */
 
 export default function App() {
   return (
     <AuthProvider>
       <Routes>
-        {/* Default route → go to login */}
-        <Route path="/" element={<Navigate to="/login" replace />} />
 
-        {/* Login page */}
+        {/* Default → redirect based on auth */}
+        <Route
+          path="/"
+          element={<Navigate to="/dashboard" replace />}
+        />
+
+        {/* Login */}
         <Route path="/login" element={<Login />} />
 
-        {/* All ERP pages inside layout */}
-        <Route element={<Layout />}>
-          <Route path="/dashboard" element={<Dashboard />} />
-          <Route path="/customers" element={<Customers />} />
-          <Route path="/suppliers" element={<Suppliers />} />
-          <Route path="/purchases" element={<Purchases />} />
-          <Route path="/receiving" element={<Receiving />} />
-          <Route path="/shipments" element={<Shipments />} />
-          <Route path="/treasuries" element={<Treasuries />} />
-          <Route path="/expenses" element={<Expenses />} />
-          <Route path="/inventory" element={<Inventory />} />
-          <Route path="/reports" element={<Reports />} />
+        {/* ================= PROTECTED ERP AREA ================= */}
+        <Route element={<PrivateRoute />}>
+          <Route element={<Layout />}>
+
+            <Route path="/dashboard" element={<Dashboard />} />
+
+            {/* Admin Only */}
+            <Route element={<AdminRoute />}>
+              <Route path="/users" element={<Users />} />
+            </Route>
+
+            {/* Normal Pages */}
+            <Route path="/customers" element={<Customers />} />
+            <Route path="/suppliers" element={<Suppliers />} />
+            <Route path="/purchases" element={<Purchases />} />
+            <Route path="/receiving" element={<Receiving />} />
+            <Route path="/shipments" element={<Shipments />} />
+            <Route path="/treasuries" element={<Treasuries />} />
+            <Route path="/expenses" element={<Expenses />} />
+            <Route path="/inventory" element={<Inventory />} />
+            <Route path="/reports" element={<Reports />} />
+
+          </Route>
         </Route>
 
-        {/* Catch-all */}
-        <Route path="*" element={<Navigate to="/login" replace />} />
+        {/* Catch all */}
+        <Route path="*" element={<Navigate to="/dashboard" replace />} />
+
       </Routes>
     </AuthProvider>
   );

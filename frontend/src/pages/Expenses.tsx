@@ -14,6 +14,7 @@ import {
   TableBody,
   Paper
 } from "@mui/material";
+import { useTranslation } from "react-i18next";
 
 interface Expense {
   id?: string;
@@ -25,6 +26,7 @@ interface Expense {
 export default function Expenses() {
   const [expenses, setExpenses] = useState<Expense[]>([]);
   const [open, setOpen] = useState(false);
+  const { t } = useTranslation();
   const [form, setForm] = useState<Expense>({
     number: 0,
     name: "",
@@ -63,19 +65,19 @@ export default function Expenses() {
 
   return (
     <Paper sx={{ p: 3 }}>
-      <h2>Expense Categories</h2>
+      <h2>{t("expensesTitle")}</h2>
 
       <Button variant="contained" onClick={() => setOpen(true)} sx={{ mb: 2 }}>
-        Add Expense
+        {t("addExpense")}
       </Button>
 
       <Table>
         <TableHead>
           <TableRow>
-            <TableCell>No.</TableCell>
-            <TableCell>Name</TableCell>
-            <TableCell>Type</TableCell>
-            <TableCell>Actions</TableCell>
+            <TableCell>{t("number")}</TableCell>
+            <TableCell>{t("name")}</TableCell>
+            <TableCell>{t("type")}</TableCell>
+            <TableCell>{t("actions")}</TableCell>
           </TableRow>
         </TableHead>
         <TableBody>
@@ -85,8 +87,8 @@ export default function Expenses() {
               <TableCell>{e.name}</TableCell>
               <TableCell>{e.type}</TableCell>
               <TableCell>
-                <Button onClick={() => handleEdit(e)}>Edit</Button>
-                <Button color="error" onClick={() => handleDelete(e.id!)}>Delete</Button>
+                <Button onClick={() => handleEdit(e)}>{t("edit")}</Button>
+                <Button color="error" onClick={() => handleDelete(e.id!)}>{t("delete")}</Button>
               </TableCell>
             </TableRow>
           ))}
@@ -94,10 +96,10 @@ export default function Expenses() {
       </Table>
 
       <Dialog open={open} onClose={() => setOpen(false)}>
-        <DialogTitle>{form.id ? "Edit Expense" : "Add Expense"}</DialogTitle>
+        <DialogTitle>{form.id ? t("editExpense") : t("addExpense")}</DialogTitle>
         <DialogContent>
           <TextField
-            label="Number"
+            label={t("number")}
             type="number"
             fullWidth
             margin="dense"
@@ -105,24 +107,24 @@ export default function Expenses() {
             onChange={e => setForm({ ...form, number: +e.target.value })}
           />
           <TextField
-            label="Name"
+            label={t("name")}
             fullWidth
             margin="dense"
             value={form.name}
             onChange={e => setForm({ ...form, name: e.target.value })}
           />
           <TextField
-            label="Type"
+            label={t("type")}
             fullWidth
             margin="dense"
             value={form.type}
             onChange={e => setForm({ ...form, type: e.target.value })}
-            placeholder="salary / general / etc"
+            placeholder={t("expenseTypeHint")}
           />
         </DialogContent>
         <DialogActions>
-          <Button onClick={() => setOpen(false)}>Cancel</Button>
-          <Button variant="contained" onClick={handleSave}>Save</Button>
+          <Button onClick={() => setOpen(false)}>{t("cancel")}</Button>
+          <Button variant="contained" onClick={handleSave}>{t("save")}</Button>
         </DialogActions>
       </Dialog>
     </Paper>

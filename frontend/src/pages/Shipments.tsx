@@ -14,7 +14,7 @@ import {
   TableBody,
   Paper
 } from "@mui/material";
-
+import { useTranslation } from "react-i18next";
 export default function Shipments() {
   const [shipments, setShipments] = useState<any[]>([]);
   const [customers, setCustomers] = useState<any[]>([]);
@@ -70,6 +70,8 @@ export default function Shipments() {
     setReceivingItems(updated);
   };
 
+  const { t } = useTranslation();
+
   const handleSave = async () => {
     await api.post("/shipments", { ...form, items: receivingItems });
     setOpen(false);
@@ -78,19 +80,19 @@ export default function Shipments() {
 
   return (
     <Paper sx={{ p: 3 }}>
-      <h2>Shipments</h2>
+      <h2>{t("shipmentsTitle")}</h2>
 
       <Button variant="contained" onClick={() => setOpen(true)} sx={{ mb: 2 }}>
-        New Shipment
+        {t("newShipment")}
       </Button>
 
       <Table>
         <TableHead>
           <TableRow>
-            <TableCell>Container #</TableCell>
-            <TableCell>Date</TableCell>
-            <TableCell>Customer</TableCell>
-            <TableCell>Items</TableCell>
+            <TableCell>{t("containerNumber")}</TableCell>
+            <TableCell>{t("date")}</TableCell>
+            <TableCell>{t("customer")}</TableCell>
+            <TableCell>{t("items")}</TableCell>
           </TableRow>
         </TableHead>
         <TableBody>
@@ -106,10 +108,10 @@ export default function Shipments() {
       </Table>
 
       <Dialog open={open} onClose={() => setOpen(false)} fullWidth maxWidth="md">
-        <DialogTitle>New Shipment</DialogTitle>
+        <DialogTitle>{t("newShipment")}</DialogTitle>
         <DialogContent>
           <TextField
-            label="Container Number"
+            label={t("containerNumber")}
             fullWidth
             margin="dense"
             onChange={e => setForm({ ...form, containerNo: e.target.value })}
@@ -123,7 +125,7 @@ export default function Shipments() {
           <TextField
             select
             SelectProps={{ native: true }}
-            label="Customer"
+            label={t("customer")}
             fullWidth
             margin="dense"
             onChange={e => setForm({ ...form, customerId: e.target.value })}
@@ -137,7 +139,7 @@ export default function Shipments() {
           <TextField
             select
             SelectProps={{ native: true }}
-            label="Receiving Invoice"
+            label={t("receivingInvoice")}
             fullWidth
             margin="dense"
             onChange={e => handleReceivingSelect(e.target.value)}
@@ -148,16 +150,16 @@ export default function Shipments() {
             ))}
           </TextField>
 
-          <h4>Shipment Items</h4>
+          <h4>{t("shipmentItems")}</h4>
           {receivingItems.map((item, index) => (
             <div key={index} style={{ marginBottom: 10 }}>
               <TextField
-                label="Shipped Cartons"
+                label={t("shippedCartons")}
                 type="number"
                 onChange={e => handleItemChange(index, "shippedCartons", +e.target.value)}
               />
               <TextField
-                label="Shipped Units"
+                label={t("shippedUnits")}
                 type="number"
                 onChange={e => handleItemChange(index, "shippedUnits", +e.target.value)}
               />
@@ -165,13 +167,13 @@ export default function Shipments() {
           ))}
 
           <TextField
-            label="Shipping Company"
+            label={t("shippingCompany")}
             fullWidth
             margin="dense"
             onChange={e => setForm({ ...form, shippingCompany: e.target.value })}
           />
           <TextField
-            label="Notes"
+            label={t("notes")}
             fullWidth
             margin="dense"
             multiline
@@ -180,8 +182,8 @@ export default function Shipments() {
           />
         </DialogContent>
         <DialogActions>
-          <Button onClick={() => setOpen(false)}>Cancel</Button>
-          <Button variant="contained" onClick={handleSave}>Save Shipment</Button>
+          <Button onClick={() => setOpen(false)}>{t("cancel")}</Button>
+          <Button variant="contained" onClick={handleSave}>{t("saveShipment")}</Button>
         </DialogActions>
       </Dialog>
     </Paper>

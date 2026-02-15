@@ -12,10 +12,12 @@ import {
   TableCell,
   TableBody
 } from "@mui/material";
+import { useTranslation } from "react-i18next";
 
 export default function Dashboard() {
   const [stats, setStats] = useState<any>({});
   const [lowStock, setLowStock] = useState<any[]>([]);
+  const { t } = useTranslation();
 
   const loadData = async () => {
     const [customers, suppliers, inventory, cashflow] = await Promise.all([
@@ -42,30 +44,30 @@ export default function Dashboard() {
 
   return (
     <div>
-      <Typography variant="h4" sx={{ mb: 3 }}>Dashboard</Typography>
+      <Typography variant="h4" sx={{ mb: 3 }}>{t("dashboardTitle")}</Typography>
 
       <Grid container spacing={2} sx={{ mb: 3 }}>
         <Grid item xs={12} md={3}>
           <Card><CardContent>
-            <Typography variant="h6">Customers</Typography>
+            <Typography variant="h6">{t("customers")}</Typography>
             <Typography variant="h4">{stats.customers || 0}</Typography>
           </CardContent></Card>
         </Grid>
         <Grid item xs={12} md={3}>
           <Card><CardContent>
-            <Typography variant="h6">Suppliers</Typography>
+            <Typography variant="h6">{t("suppliers")}</Typography>
             <Typography variant="h4">{stats.suppliers || 0}</Typography>
           </CardContent></Card>
         </Grid>
         <Grid item xs={12} md={3}>
           <Card><CardContent>
-            <Typography variant="h6">Inventory Items</Typography>
+            <Typography variant="h6">{t("inventoryItems")}</Typography>
             <Typography variant="h4">{stats.inventoryItems || 0}</Typography>
           </CardContent></Card>
         </Grid>
         <Grid item xs={12} md={3}>
           <Card><CardContent>
-            <Typography variant="h6">Net Cash</Typography>
+            <Typography variant="h6">{t("netCash")}</Typography>
             <Typography variant="h4">{stats.netCash?.toLocaleString() || 0}</Typography>
           </CardContent></Card>
         </Grid>
@@ -73,12 +75,12 @@ export default function Dashboard() {
 
       {/* Low Stock Table */}
       <Paper sx={{ p: 2 }}>
-        <Typography variant="h6" sx={{ mb: 2 }}>Low Stock Alert</Typography>
+        <Typography variant="h6" sx={{ mb: 2 }}>{t("lowStock")}</Typography>
         <Table>
           <TableHead>
             <TableRow>
-              <TableCell>Item</TableCell>
-              <TableCell>Balance</TableCell>
+              <TableCell>{t("item")}</TableCell>
+              <TableCell>{t("balance")}</TableCell>
             </TableRow>
           </TableHead>
           <TableBody>

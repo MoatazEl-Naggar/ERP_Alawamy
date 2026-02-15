@@ -1,5 +1,6 @@
 import { Request, Response } from "express";
 import * as service from "./user.service";
+import { prisma } from "../../config/prisma";
 
 export const createUser = async (req: Request, res: Response) => {
   try {
@@ -16,6 +17,16 @@ export const changePassword = async (req: Request, res: Response) => {
   await service.changePassword(userId, newPassword);
   res.json({ message: "Password updated" });
 };
+
+export const getUsers = async (req: Request, res: Response) => {
+  try {
+    const users = await service.getUsers();
+    res.json(users);
+  } catch (err: any) {
+    res.status(500).json({ message: err.message });
+  }
+};
+
 
 export const toggleStatus = async (req: Request, res: Response) => {
   const { userId, isActive } = req.body;
