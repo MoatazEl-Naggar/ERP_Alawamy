@@ -119,7 +119,7 @@ export default function Layout() {
                 <ListItemButton onClick={() => navigate("/treasuries")}>
                   <ListItemText primary={t("treasuries")} />
                 </ListItemButton>
-                <ListItemButton onClick={() => navigate("/expense-categories")}>
+                <ListItemButton onClick={() => navigate("/expenses")}>
                   <ListItemText primary={t("expenseCategories")} />
                 </ListItemButton>
               </List>
@@ -182,7 +182,7 @@ export default function Layout() {
             <MenuItem value="zh">中文</MenuItem>
           </Select>
 
-          <Typography sx={{ cursor: "pointer" }} onClick={logout}>
+          <Typography sx={{ cursor: "pointer", ml: 2 }} onClick={logout}>
             {t("logout")}
           </Typography>
         </Toolbar>
