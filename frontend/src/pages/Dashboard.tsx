@@ -47,25 +47,25 @@ export default function Dashboard() {
       <Typography variant="h4" sx={{ mb: 3 }}>{t("dashboardTitle")}</Typography>
 
       <Grid container spacing={2} sx={{ mb: 3 }}>
-        <Grid item xs={12} md={3}>
+        <Grid size={{ xs: 12, md: 3 }}>
           <Card><CardContent>
             <Typography variant="h6">{t("customers")}</Typography>
             <Typography variant="h4">{stats.customers || 0}</Typography>
           </CardContent></Card>
         </Grid>
-        <Grid item xs={12} md={3}>
+        <Grid size={{ xs: 12, md: 3 }}>
           <Card><CardContent>
             <Typography variant="h6">{t("suppliers")}</Typography>
             <Typography variant="h4">{stats.suppliers || 0}</Typography>
           </CardContent></Card>
         </Grid>
-        <Grid item xs={12} md={3}>
+        <Grid size={{ xs: 12, md: 3 }}>
           <Card><CardContent>
             <Typography variant="h6">{t("inventoryItems")}</Typography>
             <Typography variant="h4">{stats.inventoryItems || 0}</Typography>
           </CardContent></Card>
         </Grid>
-        <Grid item xs={12} md={3}>
+        <Grid size={{ xs: 12, md: 3 }}>
           <Card><CardContent>
             <Typography variant="h6">{t("netCash")}</Typography>
             <Typography variant="h4">{stats.netCash?.toLocaleString() || 0}</Typography>

@@ -133,7 +133,7 @@ export default function Receiving() {
           </TextField>
 
           <h4>{t("receivedItems")}</h4>
-          {selectedPurchaseItems.map((item, index) => (
+          {selectedPurchaseItems.map((_, index) => (
             <div key={index} style={{ marginBottom: 10 }}>
               <TextField
                 label={t("receivedCartons")}

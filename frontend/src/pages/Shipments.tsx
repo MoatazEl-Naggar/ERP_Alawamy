@@ -151,7 +151,7 @@ export default function Shipments() {
           </TextField>
 
           <h4>{t("shipmentItems")}</h4>
-          {receivingItems.map((item, index) => (
+          {receivingItems.map((_, index) => (
             <div key={index} style={{ marginBottom: 10 }}>
               <TextField
                 label={t("shippedCartons")}

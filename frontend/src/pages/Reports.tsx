@@ -42,13 +42,13 @@ export default function Reports() {
 
       {/* Date Filters */}
       <Grid container spacing={2} sx={{ mb: 3 }}>
-        <Grid item xs={12} md={4}>
+        <Grid size={{ xs: 12, md: 4 }}>
           <TextField type="date" fullWidth label={t("startDate")} InputLabelProps={{ shrink: true }} onChange={e => setStart(e.target.value)} />
         </Grid>
-        <Grid item xs={12} md={4}>
+        <Grid size={{ xs: 12, md: 4 }}>
           <TextField type="date" fullWidth label={t("endDate")} InputLabelProps={{ shrink: true }} onChange={e => setEnd(e.target.value)} />
         </Grid>
-        <Grid item xs={12} md={4}>
+        <Grid size={{ xs: 12, md: 4 }}>
           <Button variant="contained" fullWidth sx={{ height: "56px" }} onClick={loadReports}>
             {t("loadReports")}
           </Button>
@@ -58,19 +58,19 @@ export default function Reports() {
       {/* Cash Flow Cards */}
       {cashFlow && (
         <Grid container spacing={2} sx={{ mb: 3 }}>
-          <Grid item xs={12} md={4}>
+          <Grid size={{ xs: 12, md: 4 }}>
             <Card><CardContent>
               <Typography variant="h6">{t("totalCashIn")}</Typography>
               <Typography variant="h5">{cashFlow.totalIn.toLocaleString()}</Typography>
             </CardContent></Card>
           </Grid>
-          <Grid item xs={12} md={4}>
+          <Grid size={{ xs: 12, md: 4 }}>
             <Card><CardContent>
               <Typography variant="h6">{t("totalCashOut")}</Typography>
               <Typography variant="h5">{cashFlow.totalOut.toLocaleString()}</Typography>
             </CardContent></Card>
           </Grid>
-          <Grid item xs={12} md={4}>
+          <Grid size={{ xs: 12, md: 4 }}>
             <Card><CardContent>
               <Typography variant="h6">{t("netBalance")}</Typography>
               <Typography variant="h5">{cashFlow.net.toLocaleString()}</Typography>
