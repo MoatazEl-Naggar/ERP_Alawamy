@@ -1,0 +1,15 @@
+{
+  "purchasesTitle": "فواتير المشتريات",
+  "newInvoice": "فاتورة جديدة",
+  "invoiceNumber": "رقم الفاتورة",
+  "referenceNo": "رقم المرجع",
+  "supplier": "المورد",
+  "items": "الأصناف",
+  "addItem": "إضافة صنف",
+  "itemName": "اسم الصنف",
+  "cartons": "كرتون",
+  "units": "وحدات",
+  "price": "السعر",
+  "total": "الإجمالي",
+  "saveInvoice": "حفظ الفاتورة"
+}

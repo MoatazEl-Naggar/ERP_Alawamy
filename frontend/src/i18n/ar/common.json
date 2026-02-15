@@ -1,0 +1,22 @@
+{
+  "actions": "الإجراءات",
+  "edit": "تعديل",
+  "delete": "حذف",
+  "save": "حفظ",
+  "cancel": "إلغاء",
+  "name": "الاسم",
+  "number": "الرقم",
+  "phone": "الهاتف",
+  "email": "البريد الإلكتروني",
+  "address": "العنوان",
+  "accountNumber": "رقم الحساب",
+  "date": "التاريخ",
+  "notes": "ملاحظات",
+  "balance": "الرصيد",
+  "amount": "المبلغ",
+  "item": "الصنف",
+    "dashboardTitle": "لوحة التحكم",
+  "inventoryItems": "عناصر المخزون",
+  "netCash": "صافي النقد",
+  "lowStock": "تنبيه انخفاض المخزون"
+}

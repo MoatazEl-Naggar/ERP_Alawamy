@@ -1,0 +1,12 @@
+{
+  "receivingTitle": "فواتير الاستلام",
+  "newReceiving": "استلام جديد",
+  "receivingNumber": "رقم الاستلام",
+  "purchaseInvoice": "فاتورة الشراء",
+  "purchaseRef": "مرجع الشراء",
+  "receivedItems": "الأصناف المستلمة",
+  "received": "المستلم",
+  "receivedCartons": "الكرتون المستلم",
+  "receivedUnits": "الوحدات المستلمة",
+  "damagedUnits": "الوحدات التالفة"
+}

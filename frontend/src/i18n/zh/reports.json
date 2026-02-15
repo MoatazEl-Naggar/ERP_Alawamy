@@ -1,0 +1,16 @@
+{
+  "reportsTitle": "财务报表",
+  "startDate": "开始日期",
+  "endDate": "结束日期",
+  "loadReports": "加载报表",
+  "totalCashIn": "现金收入总额",
+  "totalCashOut": "现金支出总额",
+  "netBalance": "净余额",
+  "categoryId": "类别编号",
+  "totalSpent": "总支出",
+  "treasuryMovements": "金库流水",
+  "receipts": "收款",
+  "payments": "付款",
+  "voucher": "凭证",
+  "treasury": "金库"
+}

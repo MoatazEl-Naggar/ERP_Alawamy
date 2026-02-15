@@ -1,0 +1,24 @@
+{
+  "appName": "ERP System",
+  "dashboard": "Dashboard",
+  "registration": "Registration",
+  "transactions": "Transactions",
+  "financeManagement": "Financial Management",
+  "reportsMenu": "Reports",
+
+  "usersRegistration": "User Registration",
+  "customersRegistration": "Customer Registration",
+  "suppliersRegistration": "Supplier Registration",
+  "financeRegistration": "Financial Setup",
+
+  "purchaseDraft": "Purchase Draft Invoice",
+  "receivingGInvoice": "Receiving Goods Invoice",
+  "containerLoading": "Container Loading Invoice",
+
+  "paymentVoucher": "Payment Voucher",
+  "receiptVoucher": "Receipt Voucher",
+  "voucherReview": "Voucher Review",
+  "financialSettings": "Financial Settings",
+  "vouchers": "Vouchers",
+  "expenseCategories": "Expense Categories"
+}

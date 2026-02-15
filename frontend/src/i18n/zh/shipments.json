@@ -1,0 +1,13 @@
+{
+  "shipmentsTitle": "发货",
+  "newShipment": "新发货",
+  "shipmentItems": "发货项目",
+  "containerNumber": "集装箱号",
+  "shippingCompany": "运输公司",
+  "shipped": "已发",
+  "shippedCartons": "已发箱数",
+  "shippedUnits": "已发单位",
+  "saveShipment": "保存发货",
+  "customer": "客户",
+  "receivingInvoice": "收货单"
+}

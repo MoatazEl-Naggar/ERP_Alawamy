@@ -1,0 +1,12 @@
+{
+  "receivingTitle": "收货单",
+  "newReceiving": "新收货单",
+  "receivingNumber": "收货编号",
+  "purchaseInvoice": "采购发票",
+  "purchaseRef": "采购参考",
+  "receivedItems": "收货项目",
+  "received": "已收",
+  "receivedCartons": "已收箱数",
+  "receivedUnits": "已收单位",
+  "damagedUnits": "损坏单位"
+}

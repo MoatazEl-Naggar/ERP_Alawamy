@@ -1,0 +1,15 @@
+{
+  "treasuries": "الخزائن",
+  "treasuriesTitle": "الخزائن",
+  "addTreasury": "إضافة خزنة",
+  "newTreasury": "خزنة جديدة",
+  "treasuryName": "اسم الخزنة",
+  "expenses": "المصروفات",
+  "expensesTitle": "بنود المصروفات",
+  "addExpense": "إضافة مصروف",
+  "editExpense": "تعديل مصروف",
+  "type": "النوع",
+  "expense": "مصروف",
+  "expenseSummary": "ملخص المصروفات",
+  "expenseTypeHint": "راتب / عام / إلخ"
+}

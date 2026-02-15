@@ -1,0 +1,16 @@
+{
+  "treasuries": "Treasuries",
+  "treasuriesTitle": "Treasuries",
+  "addTreasury": "Add Treasury",
+  "newTreasury": "New Treasury",
+  "treasuryName": "Treasury Name",
+
+  "expenses": "Expenses",
+  "expensesTitle": "Expense Categories",
+  "addExpense": "Add Expense",
+  "editExpense": "Edit Expense",
+  "type": "Type",
+  "expense": "Expense",
+  "expenseSummary": "Expense Summary",
+  "expenseTypeHint": "salary / general / etc"
+}

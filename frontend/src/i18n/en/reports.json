@@ -1,0 +1,16 @@
+{
+  "reportsTitle": "Financial Reports",
+  "startDate": "Start Date",
+  "endDate": "End Date",
+  "loadReports": "Load Reports",
+  "totalCashIn": "Total Cash In",
+  "totalCashOut": "Total Cash Out",
+  "netBalance": "Net Balance",
+  "categoryId": "Category ID",
+  "totalSpent": "Total Spent",
+  "treasuryMovements": "Treasury Movements",
+  "receipts": "Receipts",
+  "payments": "Payments",
+  "voucher": "Voucher",
+  "treasury": "Treasury"
+}

@@ -1,0 +1,21 @@
+{
+  "appName": "ERP 系统",
+  "registration": "注册管理",
+  "usersRegistration": "用户管理",
+  "customersRegistration": "客户登记",
+  "suppliersRegistration": "供应商登记",
+  "financeRegistration": "财务设置",
+  "transactions": "业务流程",
+  "purchaseDraft": "采购草稿发票",
+  "receivingGInvoice": "收货单",
+  "containerLoading": "装柜发货单",
+  "financeManagement": "财务管理",
+  "paymentVoucher": "付款凭证",
+  "receiptVoucher": "收款凭证",
+  "voucherReview": "凭证审核",
+  "reportsMenu": "报表",
+  "dashboard": "仪表盘",
+  "financialSettings": "财务设置",
+  "vouchers": "凭证",
+  "expenseCategories": "费用类别"
+}

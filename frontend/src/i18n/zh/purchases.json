@@ -1,0 +1,15 @@
+{
+  "purchasesTitle": "采购发票",
+  "newInvoice": "新发票",
+  "invoiceNumber": "发票编号",
+  "referenceNo": "参考编号",
+  "supplier": "供应商",
+  "items": "项目",
+  "addItem": "添加项目",
+  "itemName": "项目名称",
+  "cartons": "箱",
+  "units": "单位",
+  "price": "价格",
+  "total": "总计",
+  "saveInvoice": "保存发票"
+}

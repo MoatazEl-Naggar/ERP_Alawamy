@@ -1,0 +1,13 @@
+{
+  "shipmentsTitle": "Shipments",
+  "newShipment": "New Shipment",
+  "shipmentItems": "Shipment Items",
+  "containerNumber": "Container Number",
+  "shippingCompany": "Shipping Company",
+  "shipped": "Shipped",
+  "shippedCartons": "Shipped Cartons",
+  "shippedUnits": "Shipped Units",
+  "saveShipment": "Save Shipment",
+  "customer": "Customer",
+  "receivingInvoice": "Receiving Invoice"
+}

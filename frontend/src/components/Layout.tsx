@@ -177,7 +177,7 @@ export default function Layout() {
             onChange={(e) => handleLanguageChange(e.target.value)}
             sx={{ mr: 2, color: "white", borderBottom: "1px solid white", "& .MuiSvgIcon-root": { color: "white" } }}
           >
-            <MenuItem value="en">EN</MenuItem>
+            {/* <MenuItem value="en">EN</MenuItem> */}
             <MenuItem value="ar">AR</MenuItem>
             <MenuItem value="zh">中文</MenuItem>
           </Select>

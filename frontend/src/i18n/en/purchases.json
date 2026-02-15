@@ -1,0 +1,15 @@
+{
+  "purchasesTitle": "Purchase Invoices",
+  "newInvoice": "New Invoice",
+  "invoiceNumber": "Invoice Number",
+  "referenceNo": "Reference No",
+  "supplier": "Supplier",
+  "items": "Items",
+  "addItem": "Add Item",
+  "itemName": "Item Name",
+  "cartons": "Cartons",
+  "units": "Units",
+  "price": "Price",
+  "total": "Total",
+  "saveInvoice": "Save Invoice"
+}

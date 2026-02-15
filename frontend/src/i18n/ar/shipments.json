@@ -1,0 +1,13 @@
+{
+  "shipmentsTitle": "الشحنات",
+  "newShipment": "شحنة جديدة",
+  "shipmentItems": "أصناف الشحنة",
+  "containerNumber": "رقم الحاوية",
+  "shippingCompany": "شركة الشحن",
+  "shipped": "المشحون",
+  "shippedCartons": "الكرتون المشحون",
+  "shippedUnits": "الوحدات المشحونة",
+  "saveShipment": "حفظ الشحنة",
+  "customer": "العميل",
+  "receivingInvoice": "فاتورة الاستلام"
+}

@@ -1,0 +1,21 @@
+{
+  "appName": "نظام ERP",
+  "registration": "التسجيل",
+  "usersRegistration": "تسجيل المستخدمين",
+  "customersRegistration": "تسجيل العملاء",
+  "suppliersRegistration": "تسجيل الموردين",
+  "financeRegistration": "إعدادات الماليات",
+  "transactions": "الحركة",
+  "purchaseDraft": "فاتورة شراء مبدئية",
+  "receivingGInvoice": "فاتورة استلام بضاعة",
+  "containerLoading": "فاتورة تعبئة حاوية",
+  "financeManagement": "الإدارة المالية",
+  "paymentVoucher": "سند صرف",
+  "receiptVoucher": "سند قبض",
+  "voucherReview": "مراجعة السندات",
+  "reportsMenu": "التقارير",
+  "dashboard": "لوحة التحكم",
+  "financialSettings": "إعدادات الماليات",
+  "vouchers": "السندات",
+  "expenseCategories": "بنود المصروفات"
+}

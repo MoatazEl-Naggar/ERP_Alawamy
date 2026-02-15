@@ -1,0 +1,22 @@
+{
+  "actions": "操作",
+  "edit": "编辑",
+  "delete": "删除",
+  "save": "保存",
+  "cancel": "取消",
+  "name": "名称",
+  "number": "编号",
+  "phone": "电话",
+  "email": "邮箱",
+  "address": "地址",
+  "accountNumber": "账户编号",
+  "date": "日期",
+  "notes": "备注",
+  "balance": "余额",
+  "amount": "金额",
+    "dashboardTitle": "仪表盘",
+  "inventoryItems": "库存项目",
+  "netCash": "净现金",
+  "lowStock": "低库存提醒",
+  "item": "项目"
+}

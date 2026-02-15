@@ -1,0 +1,15 @@
+{
+  "treasuries": "金库",
+  "treasuriesTitle": "金库",
+  "addTreasury": "新增金库",
+  "newTreasury": "新金库",
+  "treasuryName": "金库名称",
+  "expenses": "费用",
+  "expensesTitle": "费用类别",
+  "addExpense": "新增费用",
+  "editExpense": "编辑费用",
+  "type": "类型",
+  "expense": "费用",
+  "expenseSummary": "费用汇总",
+  "expenseTypeHint": "工资 / 一般 / 等"
+}

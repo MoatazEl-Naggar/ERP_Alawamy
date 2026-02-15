@@ -1,0 +1,16 @@
+{
+  "reportsTitle": "التقارير المالية",
+  "startDate": "من تاريخ",
+  "endDate": "إلى تاريخ",
+  "loadReports": "تحميل التقارير",
+  "totalCashIn": "إجمالي الداخل",
+  "totalCashOut": "إجمالي الخارج",
+  "netBalance": "صافي الرصيد",
+  "categoryId": "رقم الفئة",
+  "totalSpent": "إجمالي المصروف",
+  "treasuryMovements": "حركات الخزنة",
+  "receipts": "الإيصالات",
+  "payments": "المدفوعات",
+  "voucher": "رقم السند",
+  "treasury": "الخزنة"
+}

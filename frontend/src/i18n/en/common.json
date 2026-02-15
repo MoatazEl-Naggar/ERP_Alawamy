@@ -1,0 +1,22 @@
+{
+  "actions": "Actions",
+  "edit": "Edit",
+  "delete": "Delete",
+  "save": "Save",
+  "cancel": "Cancel",
+  "name": "Name",
+  "number": "Number",
+  "phone": "Phone",
+  "email": "Email",
+  "address": "Address",
+  "accountNumber": "Account Number",
+  "date": "Date",
+  "notes": "Notes",
+  "amount": "Amount",
+    "dashboardTitle": "Dashboard",
+  "inventoryItems": "Inventory Items",
+  "netCash": "Net Cash",
+  "lowStock": "Low Stock Alert",
+  "item": "Item",
+  "balance": "Balance"
+}
