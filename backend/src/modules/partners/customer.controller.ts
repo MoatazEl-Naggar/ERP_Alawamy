@@ -12,11 +12,11 @@ export const getCustomers = async (_: Request, res: Response) => {
 };
 
 export const updateCustomer = async (req: Request, res: Response) => {
-  const customer = await service.updateCustomer(req.params.id, req.body);
+  const customer = await service.updateCustomer(String(req.params.id), req.body);
   res.json(customer);
 };
 
 export const deleteCustomer = async (req: Request, res: Response) => {
-  await service.deleteCustomer(req.params.id);
+  await service.deleteCustomer(String(req.params.id));
   res.json({ message: "Customer deleted" });
 };

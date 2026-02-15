@@ -1,0 +1,130 @@
+diff --git a/backend/package.json b/backend/package.json
+index 58f6d061003533352442d3be52baad6a8bbdd78b..2c975aeadc5121ecf7a23dae975cc2c211195ed1 100644
+--- a/backend/package.json
++++ b/backend/package.json
+@@ -1,33 +1,33 @@
+ {
+   "name": "backend",
+   "version": "1.0.0",
+   "description": "",
+   "main": "index.js",
+   "scripts": {
+     "dev": "ts-node-dev --respawn --transpile-only src/server.ts",
+-    "build": "tsc",
++    "build": "prisma generate && tsc",
+     "start": "node dist/server.js"
+   },
+   "keywords": [],
+   "author": "",
+   "license": "ISC",
+   "type": "commonjs",
+   "dependencies": {
+     "@prisma/adapter-pg": "^7.3.0",
+     "@prisma/client": "^7.3.0",
+     "bcrypt": "^6.0.0",
+     "cors": "^2.8.6",
+     "dotenv": "^17.2.4",
+     "express": "^5.2.1",
+     "i18next": "^25.8.5",
+     "jsonwebtoken": "^9.0.3",
+     "pg": "^8.18.0",
+     "prisma": "^7.3.0",
+     "react-i18next": "^16.5.4",
+     "zod": "^4.3.6"
+   },
+   "devDependencies": {
+     "@types/bcrypt": "^6.0.0",
+     "@types/express": "^5.0.6",
+     "@types/jsonwebtoken": "^9.0.10",
+     "@types/node": "^25.2.3",
+diff --git a/backend/src/modules/expenses/expense.controller.ts b/backend/src/modules/expenses/expense.controller.ts
+index f034e842a97cfcca9c3937ac9aa73c43d828b1ca..3cc8cc45b45b72c18cee6bdb347c693be9b7536d 100644
+--- a/backend/src/modules/expenses/expense.controller.ts
++++ b/backend/src/modules/expenses/expense.controller.ts
+@@ -1,19 +1,19 @@
+ import { Request, Response } from "express";
+ import * as service from "./expense.service";
+ 
+ export const createExpense = async (req: Request, res: Response) => {
+   res.json(await service.createExpenseCategory(req.body));
+ };
+ 
+ export const getExpenses = async (_: Request, res: Response) => {
+   res.json(await service.getExpenseCategories());
+ };
+ 
+ export const updateExpense = async (req: Request, res: Response) => {
+-  res.json(await service.updateExpenseCategory(req.params.id, req.body));
++  res.json(await service.updateExpenseCategory(String(req.params.id), req.body));
+ };
+ 
+ export const deleteExpense = async (req: Request, res: Response) => {
+-  await service.deleteExpenseCategory(req.params.id);
++  await service.deleteExpenseCategory(String(req.params.id));
+   res.json({ message: "Deleted" });
+ };
+diff --git a/backend/src/modules/partners/customer.controller.ts b/backend/src/modules/partners/customer.controller.ts
+index 9d329aa53f51adb0dfefcbb1751fb75ab4eda7d1..7091684c82e9ca8f461982846a04d05f08ed95c7 100644
+--- a/backend/src/modules/partners/customer.controller.ts
++++ b/backend/src/modules/partners/customer.controller.ts
+@@ -1,22 +1,22 @@
+ import { Request, Response } from "express";
+ import * as service from "./partner.service";
+ 
+ export const createCustomer = async (req: Request, res: Response) => {
+   const customer = await service.createCustomer(req.body);
+   res.json(customer);
+ };
+ 
+ export const getCustomers = async (_: Request, res: Response) => {
+   const customers = await service.getCustomers();
+   res.json(customers);
+ };
+ 
+ export const updateCustomer = async (req: Request, res: Response) => {
+-  const customer = await service.updateCustomer(req.params.id, req.body);
++  const customer = await service.updateCustomer(String(req.params.id), req.body);
+   res.json(customer);
+ };
+ 
+ export const deleteCustomer = async (req: Request, res: Response) => {
+-  await service.deleteCustomer(req.params.id);
++  await service.deleteCustomer(String(req.params.id));
+   res.json({ message: "Customer deleted" });
+ };
+diff --git a/backend/src/modules/partners/supplier.controller.ts b/backend/src/modules/partners/supplier.controller.ts
+index 1b04e0f029726022f5441eabb71f431cbd78aab3..e520e66737e2aa7fdb85c24a03ed7a83040242a2 100644
+--- a/backend/src/modules/partners/supplier.controller.ts
++++ b/backend/src/modules/partners/supplier.controller.ts
+@@ -1,22 +1,22 @@
+ import { Request, Response } from "express";
+ import * as service from "./partner.service";
+ 
+ export const createSupplier = async (req: Request, res: Response) => {
+   const supplier = await service.createSupplier(req.body);
+   res.json(supplier);
+ };
+ 
+ export const getSuppliers = async (_: Request, res: Response) => {
+   const suppliers = await service.getSuppliers();
+   res.json(suppliers);
+ };
+ 
+ export const updateSupplier = async (req: Request, res: Response) => {
+-  const supplier = await service.updateSupplier(req.params.id, req.body);
++  const supplier = await service.updateSupplier(String(req.params.id), req.body);
+   res.json(supplier);
+ };
+ 
+ export const deleteSupplier = async (req: Request, res: Response) => {
+-  await service.deleteSupplier(req.params.id);
++  await service.deleteSupplier(String(req.params.id));
+   res.json({ message: "Supplier deleted" });
+ };
+diff --git a/backend/src/types/pg.d.ts b/backend/src/types/pg.d.ts
+new file mode 100644
+index 0000000000000000000000000000000000000000..c2ee512890e2e865debaaaa5cf3de34397cd9d5b
+--- /dev/null
++++ b/backend/src/types/pg.d.ts
+@@ -0,0 +1 @@
++declare module "pg";
