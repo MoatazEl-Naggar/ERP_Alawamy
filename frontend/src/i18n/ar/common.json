@@ -18,5 +18,9 @@
     "dashboardTitle": "لوحة التحكم",
   "inventoryItems": "عناصر المخزون",
   "netCash": "صافي النقد",
-  "lowStock": "تنبيه انخفاض المخزون"
+  "lowStock": "تنبيه انخفاض المخزون",
+  "itemName": "اسم الصنف",
+  "barcode": "الباركود",
+  "addItemRegistration": "إضافة صنف",
+  "editItemRegistration": "تعديل صنف"
 }

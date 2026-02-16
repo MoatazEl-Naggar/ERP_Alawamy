@@ -10,10 +10,10 @@ export const getExpenses = async (_: Request, res: Response) => {
 };
 
 export const updateExpense = async (req: Request, res: Response) => {
-  res.json(await service.updateExpenseCategory(req.params.id, req.body));
+  res.json(await service.updateExpenseCategory(String(req.params.id), req.body));
 };
 
 export const deleteExpense = async (req: Request, res: Response) => {
-  await service.deleteExpenseCategory(req.params.id);
+  await service.deleteExpenseCategory(String(req.params.id));
   res.json({ message: "Deleted" });
 };

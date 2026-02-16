@@ -26,16 +26,18 @@ interface Supplier {
 }
 
 export default function Suppliers() {
-  const [suppliers, setSuppliers] = useState<Supplier[]>([]);
-  const [open, setOpen] = useState(false);
-  const [form, setForm] = useState<Supplier>({
+  const initialForm: Supplier = {
     supplierNumber: "",
     name: "",
     phone: "",
     address: "",
     email: "",
     accountNumber: ""
-  });
+  };
+
+  const [suppliers, setSuppliers] = useState<Supplier[]>([]);
+  const [open, setOpen] = useState(false);
+  const [form, setForm] = useState<Supplier>(initialForm);
 
   const fetchSuppliers = async () => {
     const res = await api.get("/suppliers");
@@ -53,7 +55,7 @@ export default function Suppliers() {
       await api.post("/suppliers", form);
     }
     setOpen(false);
-    setForm({ supplierNumber: "", name: "", phone: "", address: "", email: "", accountNumber: "" });
+    setForm(initialForm);
     fetchSuppliers();
   };
 
@@ -62,6 +64,17 @@ export default function Suppliers() {
     setOpen(true);
   };
   const { t } = useTranslation();
+
+  const handleOpenCreate = () => {
+    setForm(initialForm);
+    setOpen(true);
+  };
+
+  const handleCloseDialog = () => {
+    setOpen(false);
+    setForm(initialForm);
+  };
+
   const handleDelete = async (id: string) => {
     await api.delete(`/suppliers/${id}`);
     fetchSuppliers();
@@ -71,7 +84,7 @@ export default function Suppliers() {
     <Paper sx={{ p: 3 }}>
       <h2>{t("suppliersTitle")}</h2>
 
-      <Button variant="contained" onClick={() => setOpen(true)} sx={{ mb: 2 }}>
+      <Button variant="contained" onClick={handleOpenCreate} sx={{ mb: 2 }}>
         {t("addSupplier")}
       </Button>
 
@@ -102,7 +115,7 @@ export default function Suppliers() {
       </Table>
 
       {/* Add/Edit Dialog */}
-      <Dialog open={open} onClose={() => setOpen(false)} fullWidth>
+      <Dialog open={open} onClose={handleCloseDialog} fullWidth>
         <DialogTitle>{form.id ? t("editSupplier") : t("addSupplier")}</DialogTitle>
         <DialogContent>
           <TextField
@@ -149,7 +162,7 @@ export default function Suppliers() {
           />
         </DialogContent>
         <DialogActions>
-          <Button onClick={() => setOpen(false)}>{t("cancel")}</Button>
+          <Button onClick={handleCloseDialog}>{t("cancel")}</Button>
           <Button variant="contained" onClick={handleSave}>{t("save")}</Button>
         </DialogActions>
       </Dialog>

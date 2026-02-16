@@ -4,6 +4,7 @@
   "usersRegistration": "تسجيل المستخدمين",
   "customersRegistration": "تسجيل العملاء",
   "suppliersRegistration": "تسجيل الموردين",
+  "itemsRegistration": "تسجيل الأصناف",
   "financeRegistration": "إعدادات الماليات",
   "transactions": "الحركة",
   "purchaseDraft": "فاتورة شراء مبدئية",
@@ -17,5 +18,6 @@
   "dashboard": "لوحة التحكم",
   "financialSettings": "إعدادات الماليات",
   "vouchers": "السندات",
-  "expenseCategories": "بنود المصروفات"
+  "expenseCategories": "بنود المصروفات",
+  "containerRegistration": "تسجيل الحاويات"
 }

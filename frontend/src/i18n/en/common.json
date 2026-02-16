@@ -18,5 +18,9 @@
   "netCash": "Net Cash",
   "lowStock": "Low Stock Alert",
   "item": "Item",
-  "balance": "Balance"
+  "balance": "Balance",
+  "itemName": "Item Name",
+  "barcode": "Barcode",
+  "addItemRegistration": "Add Item",
+  "editItemRegistration": "Edit Item"
 }

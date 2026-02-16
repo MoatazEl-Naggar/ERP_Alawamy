@@ -17,17 +17,23 @@ import {
 import { useTranslation } from "react-i18next";
 export default function Shipments() {
   const [shipments, setShipments] = useState<any[]>([]);
+  const [containers, setContainers] = useState<any[]>([]);
   const [customers, setCustomers] = useState<any[]>([]);
   const [receivings, setReceivings] = useState<any[]>([]);
   const [open, setOpen] = useState(false);
 
-  const [form, setForm] = useState({
+  const initialForm = {
     containerNo: "",
+    containerId: "",
     date: "",
     customerId: "",
     shippingCompany: "",
     notes: "",
     items: [] as any[]
+  };
+
+  const [form, setForm] = useState({
+    ...initialForm
   });
 
   const [receivingItems, setReceivingItems] = useState<any[]>([]);
@@ -42,6 +48,11 @@ export default function Shipments() {
     setCustomers(res.data);
   };
 
+  const fetchContainers = async () => {
+    const res = await api.get("/containers");
+    setContainers(res.data);
+  };
+
   const fetchReceivings = async () => {
     const res = await api.get("/receiving");
     setReceivings(res.data);
@@ -49,6 +60,7 @@ export default function Shipments() {
 
   useEffect(() => {
     fetchShipments();
+    fetchContainers();
     fetchCustomers();
     fetchReceivings();
   }, []);
@@ -75,14 +87,28 @@ export default function Shipments() {
   const handleSave = async () => {
     await api.post("/shipments", { ...form, items: receivingItems });
     setOpen(false);
+    setForm(initialForm);
+    setReceivingItems([]);
     fetchShipments();
+  };
+
+  const handleOpenCreate = () => {
+    setForm(initialForm);
+    setReceivingItems([]);
+    setOpen(true);
+  };
+
+  const handleCloseDialog = () => {
+    setOpen(false);
+    setForm(initialForm);
+    setReceivingItems([]);
   };
 
   return (
     <Paper sx={{ p: 3 }}>
       <h2>{t("shipmentsTitle")}</h2>
 
-      <Button variant="contained" onClick={() => setOpen(true)} sx={{ mb: 2 }}>
+      <Button variant="contained" onClick={handleOpenCreate} sx={{ mb: 2 }}>
         {t("newShipment")}
       </Button>
 
@@ -98,7 +124,7 @@ export default function Shipments() {
         <TableBody>
           {shipments.map(s => (
             <TableRow key={s.id}>
-              <TableCell>{s.containerNo}</TableCell>
+              <TableCell>{s.container?.containerNo || s.containerNo}</TableCell>
               <TableCell>{new Date(s.date).toLocaleDateString()}</TableCell>
               <TableCell>{s.customer?.name}</TableCell>
               <TableCell>{s.items.length}</TableCell>
@@ -107,15 +133,29 @@ export default function Shipments() {
         </TableBody>
       </Table>
 
-      <Dialog open={open} onClose={() => setOpen(false)} fullWidth maxWidth="md">
+      <Dialog open={open} onClose={handleCloseDialog} fullWidth maxWidth="md">
         <DialogTitle>{t("newShipment")}</DialogTitle>
         <DialogContent>
           <TextField
+            select
+            SelectProps={{ native: true }}
             label={t("containerNumber")}
             fullWidth
             margin="dense"
-            onChange={e => setForm({ ...form, containerNo: e.target.value })}
-          />
+            onChange={e => {
+              const selected = containers.find((c) => c.id === e.target.value);
+              setForm({
+                ...form,
+                containerId: e.target.value,
+                containerNo: selected?.containerNo || ""
+              });
+            }}
+          >
+            <option value="">Select Container</option>
+            {containers.map(c => (
+              <option key={c.id} value={c.id}>{c.containerNo}</option>
+            ))}
+          </TextField>
           <TextField
             type="date"
             fullWidth
@@ -151,7 +191,7 @@ export default function Shipments() {
           </TextField>
 
           <h4>{t("shipmentItems")}</h4>
-          {receivingItems.map((item, index) => (
+          {receivingItems.map((_, index) => (
             <div key={index} style={{ marginBottom: 10 }}>
               <TextField
                 label={t("shippedCartons")}
@@ -182,7 +222,7 @@ export default function Shipments() {
           />
         </DialogContent>
         <DialogActions>
-          <Button onClick={() => setOpen(false)}>{t("cancel")}</Button>
+          <Button onClick={handleCloseDialog}>{t("cancel")}</Button>
           <Button variant="contained" onClick={handleSave}>{t("saveShipment")}</Button>
         </DialogActions>
       </Dialog>

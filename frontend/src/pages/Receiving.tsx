@@ -20,12 +20,16 @@ export default function Receiving() {
   const [purchases, setPurchases] = useState<any[]>([]);
   const [open, setOpen] = useState(false);
 
-  const [form, setForm] = useState({
+  const initialForm = {
     invoiceNumber: "",
     date: "",
     purchaseId: "",
     notes: "",
     items: [] as any[]
+  };
+
+  const [form, setForm] = useState({
+    ...initialForm
   });
 
   const [selectedPurchaseItems, setSelectedPurchaseItems] = useState<any[]>([]);
@@ -69,14 +73,28 @@ export default function Receiving() {
   const handleSave = async () => {
     await api.post("/receiving", { ...form, items: selectedPurchaseItems });
     setOpen(false);
+    setForm(initialForm);
+    setSelectedPurchaseItems([]);
     fetchReceivings();
+  };
+
+  const handleOpenCreate = () => {
+    setForm(initialForm);
+    setSelectedPurchaseItems([]);
+    setOpen(true);
+  };
+
+  const handleCloseDialog = () => {
+    setOpen(false);
+    setForm(initialForm);
+    setSelectedPurchaseItems([]);
   };
 
   return (
     <Paper sx={{ p: 3 }}>
       <h2>{t("receivingTitle")}</h2>
 
-      <Button variant="contained" onClick={() => setOpen(true)} sx={{ mb: 2 }}>
+      <Button variant="contained" onClick={handleOpenCreate} sx={{ mb: 2 }}>
         {t("newReceiving")}
       </Button>
 
@@ -101,7 +119,7 @@ export default function Receiving() {
         </TableBody>
       </Table>
 
-      <Dialog open={open} onClose={() => setOpen(false)} fullWidth maxWidth="md">
+      <Dialog open={open} onClose={handleCloseDialog} fullWidth maxWidth="md">
         <DialogTitle>{t("newReceiving")}</DialogTitle>
         <DialogContent>
           <TextField
@@ -133,7 +151,7 @@ export default function Receiving() {
           </TextField>
 
           <h4>{t("receivedItems")}</h4>
-          {selectedPurchaseItems.map((item, index) => (
+          {selectedPurchaseItems.map((_, index) => (
             <div key={index} style={{ marginBottom: 10 }}>
               <TextField
                 label={t("receivedCartons")}
@@ -163,7 +181,7 @@ export default function Receiving() {
           />
         </DialogContent>
         <DialogActions>
-          <Button onClick={() => setOpen(false)}>{t("cancel")}</Button>
+          <Button onClick={handleCloseDialog}>{t("cancel")}</Button>
           <Button variant="contained" onClick={handleSave}>{t("save")}</Button>
         </DialogActions>
       </Dialog>

@@ -171,14 +171,26 @@ model ReceivingItem {
 model Shipment {
   id              String   @id @default(uuid())
   containerNo     String
+  containerId     String?
   date            DateTime
   customerId      String
   shippingCompany String?
   notes           String?
   createdAt       DateTime @default(now())
 
-  customer Customer       @relation(fields: [customerId], references: [id], onDelete: Restrict)
-  items    ShipmentItem[]
+  customer  Customer       @relation(fields: [customerId], references: [id], onDelete: Restrict)
+  container Container?     @relation(fields: [containerId], references: [id], onDelete: SetNull)
+  items     ShipmentItem[]
+}
+
+model Container {
+  id          String   @id @default(uuid())
+  containerNo String   @unique
+  date        DateTime
+  notes       String?
+  createdAt   DateTime @default(now())
+
+  shipments Shipment[]
 }
 
 model ShipmentItem {

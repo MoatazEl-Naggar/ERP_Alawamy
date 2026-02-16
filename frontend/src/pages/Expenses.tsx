@@ -20,18 +20,19 @@ interface Expense {
   id?: string;
   number: number;
   name: string;
-  type: string;
+  type?: string;
 }
 
 export default function Expenses() {
+  const initialForm: Expense = {
+    number: 0,
+    name: ""
+  };
+
   const [expenses, setExpenses] = useState<Expense[]>([]);
   const [open, setOpen] = useState(false);
   const { t } = useTranslation();
-  const [form, setForm] = useState<Expense>({
-    number: 0,
-    name: "",
-    type: ""
-  });
+  const [form, setForm] = useState<Expense>(initialForm);
 
   const fetchExpenses = async () => {
     const res = await api.get("/expenses");
@@ -43,19 +44,36 @@ export default function Expenses() {
   }, []);
 
   const handleSave = async () => {
+    const payload = {
+      number: form.number,
+      name: form.name,
+      type: form.type || "GENERAL"
+    };
+
     if (form.id) {
-      await api.put(`/expenses/${form.id}`, form);
+      await api.put(`/expenses/${form.id}`, payload);
     } else {
-      await api.post("/expenses", form);
+      await api.post("/expenses", payload);
     }
+
     setOpen(false);
-    setForm({ number: 0, name: "", type: "" });
+    setForm(initialForm);
     fetchExpenses();
   };
 
   const handleEdit = (expense: Expense) => {
     setForm(expense);
     setOpen(true);
+  };
+
+  const handleOpenCreate = () => {
+    setForm(initialForm);
+    setOpen(true);
+  };
+
+  const handleCloseDialog = () => {
+    setOpen(false);
+    setForm(initialForm);
   };
 
   const handleDelete = async (id: string) => {
@@ -67,7 +85,7 @@ export default function Expenses() {
     <Paper sx={{ p: 3 }}>
       <h2>{t("expensesTitle")}</h2>
 
-      <Button variant="contained" onClick={() => setOpen(true)} sx={{ mb: 2 }}>
+      <Button variant="contained" onClick={handleOpenCreate} sx={{ mb: 2 }}>
         {t("addExpense")}
       </Button>
 
@@ -76,7 +94,6 @@ export default function Expenses() {
           <TableRow>
             <TableCell>{t("number")}</TableCell>
             <TableCell>{t("name")}</TableCell>
-            <TableCell>{t("type")}</TableCell>
             <TableCell>{t("actions")}</TableCell>
           </TableRow>
         </TableHead>
@@ -85,7 +102,6 @@ export default function Expenses() {
             <TableRow key={e.id}>
               <TableCell>{e.number}</TableCell>
               <TableCell>{e.name}</TableCell>
-              <TableCell>{e.type}</TableCell>
               <TableCell>
                 <Button onClick={() => handleEdit(e)}>{t("edit")}</Button>
                 <Button color="error" onClick={() => handleDelete(e.id!)}>{t("delete")}</Button>
@@ -95,7 +111,7 @@ export default function Expenses() {
         </TableBody>
       </Table>
 
-      <Dialog open={open} onClose={() => setOpen(false)}>
+      <Dialog open={open} onClose={handleCloseDialog}>
         <DialogTitle>{form.id ? t("editExpense") : t("addExpense")}</DialogTitle>
         <DialogContent>
           <TextField
@@ -113,17 +129,9 @@ export default function Expenses() {
             value={form.name}
             onChange={e => setForm({ ...form, name: e.target.value })}
           />
-          <TextField
-            label={t("type")}
-            fullWidth
-            margin="dense"
-            value={form.type}
-            onChange={e => setForm({ ...form, type: e.target.value })}
-            placeholder={t("expenseTypeHint")}
-          />
         </DialogContent>
         <DialogActions>
-          <Button onClick={() => setOpen(false)}>{t("cancel")}</Button>
+          <Button onClick={handleCloseDialog}>{t("cancel")}</Button>
           <Button variant="contained" onClick={handleSave}>{t("save")}</Button>
         </DialogActions>
       </Dialog>

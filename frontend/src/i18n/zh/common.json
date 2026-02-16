@@ -14,9 +14,13 @@
   "notes": "备注",
   "balance": "余额",
   "amount": "金额",
-    "dashboardTitle": "仪表盘",
+  "dashboardTitle": "仪表盘",
   "inventoryItems": "库存项目",
   "netCash": "净现金",
   "lowStock": "低库存提醒",
-  "item": "项目"
+  "item": "项目",
+  "itemName": "商品名称",
+  "barcode": "条码",
+  "addItemRegistration": "新增商品",
+  "editItemRegistration": "编辑商品"
 }

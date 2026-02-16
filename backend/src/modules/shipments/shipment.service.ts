@@ -1,9 +1,14 @@
 import { prisma } from "../../config/prisma";
 
 export const createShipment = async (data: any) => {
+  const selectedContainer = data.containerId
+    ? await prisma.container.findUnique({ where: { id: data.containerId } })
+    : null;
+
   const shipment = await prisma.shipment.create({
     data: {
-      containerNo: data.containerNo,
+      containerNo: selectedContainer?.containerNo || data.containerNo,
+      containerId: data.containerId || null,
       date: new Date(data.date),
       customerId: data.customerId,
       shippingCompany: data.shippingCompany,
@@ -13,6 +18,7 @@ export const createShipment = async (data: any) => {
       }
     },
     include: {
+      container: true,
       items: {
         include: {
           receivingItem: {
@@ -44,6 +50,7 @@ export const createShipment = async (data: any) => {
 export const getShipments = () =>
   prisma.shipment.findMany({
     include: {
+      container: true,
       customer: true,
       items: {
         include: {

@@ -9,5 +9,7 @@
   "shippedUnits": "الوحدات المشحونة",
   "saveShipment": "حفظ الشحنة",
   "customer": "العميل",
-  "receivingInvoice": "فاتورة الاستلام"
+  "receivingInvoice": "فاتورة الاستلام",
+  "addContainer": "إضافة حاوية",
+  "editContainer": "تعديل حاوية"
 }

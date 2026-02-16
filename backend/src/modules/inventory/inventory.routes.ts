@@ -12,4 +12,32 @@ router.get(
   controller.inventoryReport
 );
 
+router.get(
+  "/inventory/items",
+  authenticate,
+  checkPermission("INVENTORY", "view"),
+  controller.getInventoryItems
+);
+
+router.post(
+  "/inventory/items",
+  authenticate,
+  checkPermission("INVENTORY", "add"),
+  controller.createInventoryItem
+);
+
+router.put(
+  "/inventory/items/:id",
+  authenticate,
+  checkPermission("INVENTORY", "edit"),
+  controller.updateInventoryItem
+);
+
+router.delete(
+  "/inventory/items/:id",
+  authenticate,
+  checkPermission("INVENTORY", "delete"),
+  controller.deleteInventoryItem
+);
+
 export default router;

@@ -27,16 +27,18 @@ interface Customer {
 }
 
 export default function Customers() {
-  const [customers, setCustomers] = useState<Customer[]>([]);
-  const [open, setOpen] = useState(false);
-  const [form, setForm] = useState<Customer>({
+  const initialForm: Customer = {
     customerNumber: "",
     name: "",
     phone: "",
     address: "",
     email: "",
     accountNumber: ""
-  });
+  };
+
+  const [customers, setCustomers] = useState<Customer[]>([]);
+  const [open, setOpen] = useState(false);
+  const [form, setForm] = useState<Customer>(initialForm);
 
   const fetchCustomers = async () => {
     const res = await api.get("/customers");
@@ -54,8 +56,18 @@ export default function Customers() {
       await api.post("/customers", form);
     }
     setOpen(false);
-    setForm({ customerNumber: "", name: "", phone: "", address: "", email: "", accountNumber: "" });
+    setForm(initialForm);
     fetchCustomers();
+  };
+
+  const handleOpenCreate = () => {
+    setForm(initialForm);
+    setOpen(true);
+  };
+
+  const handleCloseDialog = () => {
+    setOpen(false);
+    setForm(initialForm);
   };
 
   const handleEdit = (customer: Customer) => {
@@ -73,7 +85,7 @@ export default function Customers() {
     <Paper sx={{ p: 3 }}>
       <h2>{t("customersTitle")}</h2>
 
-      <Button variant="contained" onClick={() => setOpen(true)} sx={{ mb: 2 }}>
+      <Button variant="contained" onClick={handleOpenCreate} sx={{ mb: 2 }}>
         {t("addCustomer")}
       </Button>
 
@@ -104,7 +116,7 @@ export default function Customers() {
       </Table>
 
       {/* Add/Edit Dialog */}
-      <Dialog open={open} onClose={() => setOpen(false)} fullWidth>
+      <Dialog open={open} onClose={handleCloseDialog} fullWidth>
         <DialogTitle>{form.id ? t("editCustomer") : t("addCustomer")}</DialogTitle>
         <DialogContent>
           <TextField
@@ -151,7 +163,7 @@ export default function Customers() {
           />
         </DialogContent>
         <DialogActions>
-          <Button onClick={() => setOpen(false)}>{t("cancel")}</Button>
+          <Button onClick={handleCloseDialog}>{t("cancel")}</Button>
           <Button variant="contained" onClick={handleSave}>{t("save")}</Button>
         </DialogActions>
       </Dialog>

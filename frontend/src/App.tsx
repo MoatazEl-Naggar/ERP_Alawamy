@@ -9,11 +9,13 @@ import Suppliers from "./pages/Suppliers";
 import Purchases from "./pages/Purchases";
 import Receiving from "./pages/Receiving";
 import Shipments from "./pages/Shipments";
+import ContainerRegistration from "./pages/ContainerRegistration";
 import Treasuries from "./pages/Treasuries";
 import Expenses from "./pages/Expenses";
 import Inventory from "./pages/Inventory";
 import Reports from "./pages/Reports";
 import Users from "./pages/Users";
+import ItemsRegistration from "./pages/ItemsRegistration";
 
 /* ================= PRIVATE ROUTE ================= */
 
@@ -61,6 +63,8 @@ export default function App() {
             {/* Normal Pages */}
             <Route path="/customers" element={<Customers />} />
             <Route path="/suppliers" element={<Suppliers />} />
+            <Route path="/container-registration" element={<ContainerRegistration />} />
+            <Route path="/items-registration" element={<ItemsRegistration />} />
             <Route path="/purchases" element={<Purchases />} />
             <Route path="/receiving" element={<Receiving />} />
             <Route path="/shipments" element={<Shipments />} />
