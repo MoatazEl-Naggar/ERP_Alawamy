@@ -25,14 +25,16 @@ interface User {
 }
 
 export default function Users() {
-  const { t } = useTranslation();
-  const [users, setUsers] = useState<User[]>([]);
-  const [open, setOpen] = useState(false);
-  const [form, setForm] = useState<User>({
+  const initialForm: User = {
     username: "",
     password: "",
     role: "EMPLOYEE"
-  });
+  };
+
+  const { t } = useTranslation();
+  const [users, setUsers] = useState<User[]>([]);
+  const [open, setOpen] = useState(false);
+  const [form, setForm] = useState<User>(initialForm);
 
   const fetchUsers = async () => {
     const res = await api.get("/users");
@@ -50,13 +52,23 @@ export default function Users() {
       await api.post("/users", form);
     }
     setOpen(false);
-    setForm({ username: "", password: "", role: "EMPLOYEE" });
+    setForm(initialForm);
     fetchUsers();
   };
 
   const handleEdit = (u: User) => {
     setForm({ ...u, password: "" });
     setOpen(true);
+  };
+
+  const handleOpenCreate = () => {
+    setForm(initialForm);
+    setOpen(true);
+  };
+
+  const handleCloseDialog = () => {
+    setOpen(false);
+    setForm(initialForm);
   };
 
   const handleDelete = async (id: string) => {
@@ -68,7 +80,7 @@ export default function Users() {
     <Paper sx={{ p: 3 }}>
       <h2>{t("usersRegistration")}</h2>
 
-      <Button variant="contained" onClick={() => setOpen(true)} sx={{ mb: 2 }}>
+      <Button variant="contained" onClick={handleOpenCreate} sx={{ mb: 2 }}>
         {t("addUser")}
       </Button>
 
@@ -94,7 +106,7 @@ export default function Users() {
         </TableBody>
       </Table>
 
-      <Dialog open={open} onClose={() => setOpen(false)}>
+      <Dialog open={open} onClose={handleCloseDialog}>
         <DialogTitle>{form.id ? t("editUser") : t("addUser")}</DialogTitle>
         <DialogContent>
           <TextField
@@ -125,7 +137,7 @@ export default function Users() {
           </TextField>
         </DialogContent>
         <DialogActions>
-          <Button onClick={() => setOpen(false)}>{t("cancel")}</Button>
+          <Button onClick={handleCloseDialog}>{t("cancel")}</Button>
           <Button variant="contained" onClick={handleSave}>{t("save")}</Button>
         </DialogActions>
       </Dialog>

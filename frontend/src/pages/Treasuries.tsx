@@ -43,11 +43,21 @@ export default function Treasuries() {
     fetchTreasuries();
   };
 
+  const handleOpenCreate = () => {
+    setName("");
+    setOpen(true);
+  };
+
+  const handleCloseDialog = () => {
+    setOpen(false);
+    setName("");
+  };
+
   return (
     <Paper sx={{ p: 3 }}>
       <h2>{t("treasuriesTitle")}</h2>
 
-      <Button variant="contained" onClick={() => setOpen(true)} sx={{ mb: 2 }}>
+      <Button variant="contained" onClick={handleOpenCreate} sx={{ mb: 2 }}>
         {t("addTreasury")}
       </Button>
 
@@ -68,7 +78,7 @@ export default function Treasuries() {
         </TableBody>
       </Table>
 
-      <Dialog open={open} onClose={() => setOpen(false)}>
+      <Dialog open={open} onClose={handleCloseDialog}>
         <DialogTitle>{t("newTreasury")}</DialogTitle>
         <DialogContent>
           <TextField
@@ -80,7 +90,7 @@ export default function Treasuries() {
           />
         </DialogContent>
         <DialogActions>
-          <Button onClick={() => setOpen(false)}>{t("cancel")}</Button>
+          <Button onClick={handleCloseDialog}>{t("cancel")}</Button>
           <Button variant="contained" onClick={handleSave}>{t("save")}</Button>
         </DialogActions>
       </Dialog>

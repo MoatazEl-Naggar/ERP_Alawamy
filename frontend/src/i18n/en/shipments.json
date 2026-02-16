@@ -9,5 +9,7 @@
   "shippedUnits": "Shipped Units",
   "saveShipment": "Save Shipment",
   "customer": "Customer",
-  "receivingInvoice": "Receiving Invoice"
+  "receivingInvoice": "Receiving Invoice",
+  "addContainer": "Add Container",
+  "editContainer": "Edit Container"
 }

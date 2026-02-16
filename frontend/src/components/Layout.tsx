@@ -80,6 +80,12 @@ export default function Layout() {
             <ListItemButton onClick={() => navigate("/suppliers")}>
               <ListItemText primary={t("suppliersRegistration")} />
             </ListItemButton>
+            <ListItemButton onClick={() => navigate("/container-registration")}>
+              <ListItemText primary={t("containerRegistration")} />
+            </ListItemButton>
+            <ListItemButton onClick={() => navigate("/items-registration")}>
+              <ListItemText primary={t("itemsRegistration")} />
+            </ListItemButton>
           </List>
         </Collapse>
 

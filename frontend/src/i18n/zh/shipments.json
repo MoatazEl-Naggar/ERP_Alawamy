@@ -9,5 +9,7 @@
   "shippedUnits": "已发单位",
   "saveShipment": "保存发货",
   "customer": "客户",
-  "receivingInvoice": "收货单"
+  "receivingInvoice": "收货单",
+  "addContainer": "新增集装箱",
+  "editContainer": "编辑集装箱"
 }

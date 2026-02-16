@@ -4,6 +4,7 @@
   "usersRegistration": "用户管理",
   "customersRegistration": "客户登记",
   "suppliersRegistration": "供应商登记",
+  "itemsRegistration": "商品登记",
   "financeRegistration": "财务设置",
   "transactions": "业务流程",
   "purchaseDraft": "采购草稿发票",
@@ -17,5 +18,6 @@
   "dashboard": "仪表盘",
   "financialSettings": "财务设置",
   "vouchers": "凭证",
-  "expenseCategories": "费用类别"
+  "expenseCategories": "费用类别",
+  "containerRegistration": "集装箱登记"
 }

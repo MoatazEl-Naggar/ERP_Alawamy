@@ -21,13 +21,17 @@ export default function Shipments() {
   const [receivings, setReceivings] = useState<any[]>([]);
   const [open, setOpen] = useState(false);
 
-  const [form, setForm] = useState({
+  const initialForm = {
     containerNo: "",
     date: "",
     customerId: "",
     shippingCompany: "",
     notes: "",
     items: [] as any[]
+    };
+
+  const [form, setForm] = useState({
+    ...initialForm
   });
 
   const [receivingItems, setReceivingItems] = useState<any[]>([]);
@@ -75,14 +79,28 @@ export default function Shipments() {
   const handleSave = async () => {
     await api.post("/shipments", { ...form, items: receivingItems });
     setOpen(false);
+    setForm(initialForm);
+    setReceivingItems([]);
     fetchShipments();
+  };
+
+  const handleOpenCreate = () => {
+    setForm(initialForm);
+    setReceivingItems([]);
+    setOpen(true);
+  };
+
+  const handleCloseDialog = () => {
+    setOpen(false);
+    setForm(initialForm);
+    setReceivingItems([]);
   };
 
   return (
     <Paper sx={{ p: 3 }}>
       <h2>{t("shipmentsTitle")}</h2>
 
-      <Button variant="contained" onClick={() => setOpen(true)} sx={{ mb: 2 }}>
+      <Button variant="contained" onClick={handleOpenCreate} sx={{ mb: 2 }}>
         {t("newShipment")}
       </Button>
 
@@ -107,7 +125,7 @@ export default function Shipments() {
         </TableBody>
       </Table>
 
-      <Dialog open={open} onClose={() => setOpen(false)} fullWidth maxWidth="md">
+      <Dialog open={open} onClose={handleCloseDialog} fullWidth maxWidth="md">
         <DialogTitle>{t("newShipment")}</DialogTitle>
         <DialogContent>
           <TextField
@@ -182,7 +200,7 @@ export default function Shipments() {
           />
         </DialogContent>
         <DialogActions>
-          <Button onClick={() => setOpen(false)}>{t("cancel")}</Button>
+          <Button onClick={handleCloseDialog}>{t("cancel")}</Button>
           <Button variant="contained" onClick={handleSave}>{t("saveShipment")}</Button>
         </DialogActions>
       </Dialog>

@@ -33,22 +33,28 @@ export default function Purchases() {
   const [suppliers, setSuppliers] = useState<Supplier[]>([]);
   const [open, setOpen] = useState(false);
 
-  const [form, setForm] = useState({
+  const initialForm = {
     invoiceNumber: "",
     referenceNo: "",
     date: "",
     supplierId: "",
     notes: "",
     items: [] as PurchaseItem[]
-  });
+  };
 
-  const [item, setItem] = useState<PurchaseItem>({
+  const initialItem: PurchaseItem = {
     itemName: "",
     qtyCartons: 0,
     qtyUnits: 0,
     price: 0,
     total: 0
-  });
+  };
+
+  const [form, setForm] = useState({
+    ...initialForm
+    });
+
+  const [item, setItem] = useState<PurchaseItem>(initialItem);
 
   const fetchInvoices = async () => {
     const res = await api.get("/purchase-invoices");
@@ -67,21 +73,34 @@ export default function Purchases() {
 
   const addItem = () => {
     setForm({ ...form, items: [...form.items, item] });
-    setItem({ itemName: "", qtyCartons: 0, qtyUnits: 0, price: 0, total: 0 });
+    setItem(initialItem);
   };
   const { t } = useTranslation();
   const handleSave = async () => {
     await api.post("/purchase-invoices", form);
     setOpen(false);
-    setForm({ invoiceNumber: "", referenceNo: "", date: "", supplierId: "", notes: "", items: [] });
+    setForm(initialForm);
+    setItem(initialItem);    
     fetchInvoices();
+  };
+
+  const handleOpenCreate = () => {
+    setForm(initialForm);
+    setItem(initialItem);
+    setOpen(true);
+  };
+
+  const handleCloseDialog = () => {
+    setOpen(false);
+    setForm(initialForm);
+    setItem(initialItem);
   };
 
   return (
     <Paper sx={{ p: 3 }}>
       <h2>{t("purchasesTitle")}</h2>
 
-      <Button variant="contained" onClick={() => setOpen(true)} sx={{ mb: 2 }}>
+      <Button variant="contained" onClick={handleOpenCreate} sx={{ mb: 2 }}>
         {t("newInvoice")}
       </Button>
 
@@ -106,7 +125,7 @@ export default function Purchases() {
         </TableBody>
       </Table>
 
-      <Dialog open={open} onClose={() => setOpen(false)} fullWidth maxWidth="md">
+      <Dialog open={open} onClose={handleCloseDialog} fullWidth maxWidth="md">
         <DialogTitle>{t("newInvoice")}</DialogTitle>
         <DialogContent>
           <TextField
@@ -174,7 +193,7 @@ export default function Purchases() {
           />
         </DialogContent>
         <DialogActions>
-          <Button onClick={() => setOpen(false)}>{t("cancel")}</Button>
+          <Button onClick={handleCloseDialog}>{t("cancel")}</Button>
           <Button variant="contained" onClick={handleSave}>{t("saveInvoice")}</Button>
         </DialogActions>
       </Dialog>
