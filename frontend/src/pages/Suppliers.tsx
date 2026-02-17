@@ -14,6 +14,7 @@ import {
   TableBody,
   Paper
 } from "@mui/material";
+import ActionsCell from "../components/table/ActionsCell";
 import { useTranslation } from "react-i18next";
 interface Supplier {
   id?: string;
@@ -63,7 +64,10 @@ export default function Suppliers() {
     setForm(supplier);
     setOpen(true);
   };
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
+  const isRTL = i18n.language === "ar";
+  const actionsAlign = isRTL ? "left" : "right";
+  const textAlign = isRTL ? "right" : "left";
   const handleDelete = async (id: string) => {
     await api.delete(`/suppliers/${id}`);
     fetchSuppliers();
@@ -90,24 +94,24 @@ export default function Suppliers() {
       <Table>
         <TableHead>
           <TableRow>
-            <TableCell>{t("number")}</TableCell>
-            <TableCell>{t("name")}</TableCell>
-            <TableCell>{t("phone")}</TableCell>
-            <TableCell>{t("email")}</TableCell>
-            <TableCell>{t("actions")}</TableCell>
+            <TableCell align={textAlign}>{t("number")}</TableCell>
+            <TableCell align={textAlign}>{t("name")}</TableCell>
+            <TableCell align={textAlign}>{t("phone")}</TableCell>
+            <TableCell align={textAlign}>{t("email")}</TableCell>
+            <TableCell align={actionsAlign}>{t("actions")}</TableCell>
           </TableRow>
         </TableHead>
         <TableBody>
           {suppliers.map(s => (
             <TableRow key={s.id}>
-              <TableCell>{s.supplierNumber}</TableCell>
-              <TableCell>{s.name}</TableCell>
-              <TableCell>{s.phone}</TableCell>
-              <TableCell>{s.email}</TableCell>
-              <TableCell>
-                <Button onClick={() => handleEdit(s)}>{t("edit")}</Button>
-                <Button color="error" onClick={() => handleDelete(s.id!)}>{t("delete")}</Button>
-              </TableCell>
+              <TableCell align={textAlign}>{s.supplierNumber}</TableCell>
+              <TableCell align={textAlign}>{s.name}</TableCell>
+              <TableCell align={textAlign}>{s.phone}</TableCell>
+              <TableCell align={textAlign}>{s.email}</TableCell>
+              <ActionsCell
+                onEdit={() => handleEdit(s)}
+                onDelete={() => handleDelete(s.id!)}
+              />
             </TableRow>
           ))}
         </TableBody>

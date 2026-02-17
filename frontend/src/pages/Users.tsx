@@ -13,9 +13,12 @@ import {
   TableRow,
   TableCell,
   TableBody,
-  Paper
+  Paper,
+  Stack,
+  Typography
 } from "@mui/material";
 import { useTranslation } from "react-i18next";
+import ActionsCell from "../components/table/ActionsCell";
 
 interface User {
   id?: string;
@@ -31,7 +34,10 @@ export default function Users() {
     role: "EMPLOYEE"
   };
 
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
+  const isRTL = i18n.language === "ar";
+  const actionsAlign = isRTL ? "left" : "right";
+  const textAlign = isRTL ? "right" : "left";
   const [users, setUsers] = useState<User[]>([]);
   const [open, setOpen] = useState(false);
   const [form, setForm] = useState<User>(initialForm);
@@ -78,29 +84,29 @@ export default function Users() {
 
   return (
     <Paper sx={{ p: 3 }}>
-      <h2>{t("usersRegistration")}</h2>
-
-      <Button variant="contained" onClick={handleOpenCreate} sx={{ mb: 2 }}>
-        {t("addUser")}
-      </Button>
-
+    <Stack direction={{ xs: "column", sm: "row" }} justifyContent="space-between" alignItems={{ xs: "start", sm: "center" }} sx={{ mb: 2 }} spacing={1}>
+        <Typography variant="h5" fontWeight={700}>{t("usersRegistration")}</Typography>
+        <Button variant="contained" onClick={handleOpenCreate}>
+          {t("addUser")}
+        </Button>
+      </Stack>
       <Table>
         <TableHead>
           <TableRow>
-            <TableCell>{t("username")}</TableCell>
-            <TableCell>{t("role")}</TableCell>
-            <TableCell>{t("actions")}</TableCell>
+            <TableCell align={textAlign}>{t("username")}</TableCell>
+            <TableCell align={textAlign}>{t("role")}</TableCell>
+            <TableCell align={actionsAlign}>{t("actions")}</TableCell>
           </TableRow>
         </TableHead>
         <TableBody>
           {users.map(u => (
             <TableRow key={u.id}>
-              <TableCell>{u.username}</TableCell>
-              <TableCell>{u.role}</TableCell>
-              <TableCell>
-                <Button onClick={() => handleEdit(u)}>{t("edit")}</Button>
-                <Button color="error" onClick={() => handleDelete(u.id!)}>{t("delete")}</Button>
-              </TableCell>
+              <TableCell align={textAlign}>{u.username}</TableCell>
+              <TableCell align={textAlign}>{u.role}</TableCell>
+              <ActionsCell
+                onEdit={() => handleEdit(u)}
+                onDelete={() => handleDelete(u.id!)}
+                />
             </TableRow>
           ))}
         </TableBody>

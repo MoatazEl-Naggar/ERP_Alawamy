@@ -32,7 +32,7 @@ import {
 import { useLocation, useNavigate, Outlet } from "react-router-dom";
 import { useAuth } from "../auth/AuthContext";
 import { useTranslation } from "react-i18next";
-import { useMemo, useState } from "react";
+import { useState } from "react";
 import { useTheme } from "@mui/material/styles";
 
 const drawerWidth = 268;
@@ -76,8 +76,6 @@ export default function Layout() {
     document.body.dir = lang === "ar" ? "rtl" : "ltr";
   };
 
-  const userRole = useMemo(() => user?.role?.toLowerCase() ?? "user", [user?.role]);
-
   const drawerContent = (
     <Box sx={{ width: drawerWidth, height: "100%", display: "flex", flexDirection: "column" }}>
       <Box sx={{ p: 2, pt: 3 }}>
@@ -89,7 +87,7 @@ export default function Layout() {
 
       <List sx={{ flexGrow: 1, px: 1, py: 1 }}>
         <ListItemButton selected={isSelected("/dashboard")} onClick={() => navigateTo("/dashboard")}>
-          <Dashboard fontSize="small" sx={{ mr: 1 }} />
+          <Dashboard fontSize="small" sx={{ marginInlineEnd: 1 }} />
           <ListItemText primary={t("dashboard")} />
         </ListItemButton>
 
@@ -102,27 +100,27 @@ export default function Layout() {
           {openMenu === "registration" ? <ExpandLess /> : <ExpandMore />}
         </ListItemButton>
         <Collapse in={openMenu === "registration"} timeout="auto" unmountOnExit>
-          <List component="div" disablePadding sx={{ pl: 2 }}>
+          <List component="div" disablePadding sx={{ paddingInlineStart: 2 }}>
             {user?.role === "ADMIN" && (
               <ListItemButton selected={isSelected("/users")} onClick={() => navigateTo("/users")}>
-                <Person fontSize="small" sx={{ mr: 1 }} />
+                <Person fontSize="small" sx={{ marginInlineEnd: 1 }} />
                 <ListItemText primary={t("usersRegistration")} />
               </ListItemButton>
             )}
             <ListItemButton selected={isSelected("/customers")} onClick={() => navigateTo("/customers")}>
-              <Business fontSize="small" sx={{ mr: 1 }} />
+              <Business fontSize="small" sx={{ marginInlineEnd: 1 }} />
               <ListItemText primary={t("customersRegistration")} />
             </ListItemButton>
             <ListItemButton selected={isSelected("/suppliers")} onClick={() => navigateTo("/suppliers")}>
-              <Business fontSize="small" sx={{ mr: 1 }} />
+              <Business fontSize="small" sx={{ marginInlineEnd: 1 }} />
               <ListItemText primary={t("suppliersRegistration")} />
             </ListItemButton>
             <ListItemButton selected={isSelected("/container-registration")} onClick={() => navigateTo("/container-registration")}>
-              <LocalShipping fontSize="small" sx={{ mr: 1 }} />
+              <LocalShipping fontSize="small" sx={{ marginInlineEnd: 1 }} />
               <ListItemText primary={t("containerRegistration")} />
             </ListItemButton>
             <ListItemButton selected={isSelected("/items-registration")} onClick={() => navigateTo("/items-registration")}>
-              <LocalShipping fontSize="small" sx={{ mr: 1 }} />
+              <LocalShipping fontSize="small" sx={{ marginInlineEnd: 1 }} />
               <ListItemText primary={t("itemsRegistration")} />
             </ListItemButton>
           </List>
@@ -137,7 +135,7 @@ export default function Layout() {
         </ListItemButton>
 
         <Collapse in={openMenu === "transactions"} timeout="auto" unmountOnExit>
-          <List component="div" disablePadding sx={{ pl: 2 }}>
+          <List component="div" disablePadding sx={{ paddingInlineStart: 2 }}>
             <ListItemButton selected={isSelected("/purchases")} onClick={() => navigateTo("/purchases")}>
               <ListItemText primary={t("purchaseDraft")} />
             </ListItemButton>
@@ -154,20 +152,20 @@ export default function Layout() {
           {t("financeManagement")}
         </ListSubheader> */}
         <ListItemButton onClick={() => toggleMenu("finance")}>
-          <AccountBalance fontSize="small" sx={{ mr: 1 }} />
+          <AccountBalance fontSize="small" sx={{ marginInlineEnd: 1 }} />
           <ListItemText primary={t("financeManagement")} />
           {openMenu === "finance" ? <ExpandLess /> : <ExpandMore />}
         </ListItemButton>
 
         <Collapse in={openMenu === "finance"} timeout="auto" unmountOnExit>
-          <List component="div" disablePadding sx={{ pl: 2 }}>
+          <List component="div" disablePadding sx={{ paddingInlineStart: 2 }}>
             <ListItemButton onClick={() => toggleSubMenu("financeSettings")}>
               <ListItemText primary={t("financialSettings")} />
               {openSubMenu === "financeSettings" ? <ExpandLess /> : <ExpandMore />}
             </ListItemButton>
 
             <Collapse in={openSubMenu === "financeSettings"} timeout="auto" unmountOnExit>
-              <List component="div" disablePadding sx={{ pl: 2 }}>
+              <List component="div" disablePadding sx={{ paddingInlineStart: 2 }}>
                 <ListItemButton selected={isSelected("/treasuries")} onClick={() => navigateTo("/treasuries")}>
                   <ListItemText primary={t("treasuries")} />
                 </ListItemButton>
@@ -183,7 +181,7 @@ export default function Layout() {
             </ListItemButton>
 
             <Collapse in={openSubMenu === "vouchers"} timeout="auto" unmountOnExit>
-              <List component="div" disablePadding sx={{ pl: 2 }}>
+              <List component="div" disablePadding sx={{ paddingInlineStart: 2 }}>
                 <ListItemButton onClick={() => navigateTo("/payment-vouchers")}>
                   <ListItemText primary={t("paymentVoucher")} />
                 </ListItemButton>
@@ -203,7 +201,7 @@ export default function Layout() {
         <Divider sx={{ my: 1 }} />
 
         <ListItemButton selected={isSelected("/reports")} onClick={() => navigateTo("/reports")}>
-          <Assessment fontSize="small" sx={{ mr: 1 }} />
+          <Assessment fontSize="small" sx={{ marginInlineEnd: 1 }} />
           <ListItemText primary={t("reportsMenu")} />
         </ListItemButton>
       </List>
@@ -221,7 +219,7 @@ export default function Layout() {
       >
         <Toolbar>
           {isMobile && (
-            <IconButton color="inherit" edge="start" onClick={toggleDrawer} sx={{ mr: 2 }}>
+            <IconButton color="inherit" edge="start" onClick={toggleDrawer} sx={{ marginInlineEnd: 2 }}>
               <MenuIcon />
             </IconButton>
           )}
@@ -230,13 +228,30 @@ export default function Layout() {
             {t("appName")}
           </Typography>
 
-          <Stack direction="row" spacing={1.5} alignItems="center">
+          <Stack direction="row" spacing={1.5} alignItems="center" sx={{ gap: 1.5 }}>
             <Chip
-              icon={<Person />}
-              label={userRole}
               size="small"
-              sx={{ bgcolor: "rgba(255,255,255,0.18)", color: "white", textTransform: "capitalize" }}
+              sx={{
+                bgcolor: "rgba(255,255,255,0.18)",
+                color: "white",
+                px: 0.5,
+                marginInlineEnd: isRTL ? 0 : 0.5,
+                marginInlineStart: isRTL ? 0.5 : 0
+              }}
+              label={
+                <Stack
+                  direction={isRTL ? "row-reverse" : "row"}
+                  alignItems="center"
+                  sx={{ gap: 0.8 }}
+                >
+                  <Person sx={{ fontSize: 18 }} />
+                  <span style={{ fontWeight: 500 }}>
+                    {user?.username ?? "User"}
+                  </span>
+                </Stack>
+              }
             />
+
             <Select
               size="small"
               value={i18n.language}
