@@ -16,6 +16,9 @@
  import Reports from "./pages/Reports";
  import Users from "./pages/Users";
 import ItemsRegistration from "./pages/ItemsRegistration";
+import ReceiptVouchers from "./pages/ReceiptVouchers";
+import PaymentVouchers from "./pages/PaymentVouchers";
+import VoucherReview from "./pages/VoucherReview";
  
  /* ================= PRIVATE ROUTE ================= */
  
@@ -58,8 +61,9 @@ import ItemsRegistration from "./pages/ItemsRegistration";
              {/* Admin Only */}
              <Route element={<AdminRoute />}>
                <Route path="/users" element={<Users />} />
+               <Route path="/voucher-review" element={<VoucherReview />} />
              </Route>
- 
+
              {/* Normal Pages */}
              <Route path="/customers" element={<Customers />} />
              <Route path="/suppliers" element={<Suppliers />} />
@@ -72,6 +76,8 @@ import ItemsRegistration from "./pages/ItemsRegistration";
              <Route path="/expenses" element={<Expenses />} />
              <Route path="/inventory" element={<Inventory />} />
              <Route path="/reports" element={<Reports />} />
+             <Route path="/receipt-vouchers" element={<ReceiptVouchers />} />
+             <Route path="/payment-vouchers" element={<PaymentVouchers />} />
  
            </Route>
          </Route>

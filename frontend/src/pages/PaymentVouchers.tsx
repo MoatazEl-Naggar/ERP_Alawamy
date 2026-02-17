@@ -1,0 +1,240 @@
+import { useEffect, useState } from "react";
+import api from "../api/axios";
+import {
+  Button,
+  TextField,
+  Table,
+  TableHead,
+  TableRow,
+  TableCell,
+  TableBody,
+  Paper,
+  Stack,
+  Select,
+  MenuItem,
+  FormControl,
+  InputLabel,
+  Snackbar,
+  Alert,
+  Typography
+} from "@mui/material";
+import { useTranslation } from "react-i18next";
+
+interface Treasury {
+  id: string;
+  name: string;
+}
+
+interface ExpenseCategory {
+  id: string;
+  name: string;
+}
+
+interface PaymentVoucher {
+  id: string;
+  date: string;
+  amount: number;
+  notes?: string;
+  description?: string;
+  treasury: {
+    id: string;
+    name: string;
+  };
+  expenseCategory?: {
+    id: string;
+    name: string;
+  };
+}
+
+export default function PaymentVouchers() {
+  const { t } = useTranslation();
+  const [payments, setPayments] = useState<PaymentVoucher[]>([]);
+  const [treasuries, setTreasuries] = useState<Treasury[]>([]);
+  const [expenseCategories, setExpenseCategories] = useState<ExpenseCategory[]>([]);
+  const [snackbar, setSnackbar] = useState({ open: false, message: "" });
+
+  const [form, setForm] = useState({
+    date: new Date().toISOString().split("T")[0],
+    treasuryId: "",
+    amount: 0,
+    expenseCategoryId: "",
+    notes: "",
+    description: ""
+  });
+
+  const fetchPayments = async () => {
+    const res = await api.get("/payments");
+    setPayments(res.data);
+  };
+
+  const fetchTreasuries = async () => {
+    const res = await api.get("/treasuries");
+    setTreasuries(res.data);
+  };
+
+  const fetchExpenseCategories = async () => {
+    const res = await api.get("/expenses");
+    setExpenseCategories(res.data);
+  };
+
+  useEffect(() => {
+    fetchPayments();
+    fetchTreasuries();
+    fetchExpenseCategories();
+  }, []);
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    try {
+      await api.post("/payments", {
+        ...form,
+        amount: Number(form.amount),
+        date: new Date(form.date)
+      });
+      setSnackbar({ open: true, message: t("voucherSavedSuccess") });
+      setForm({
+        date: new Date().toISOString().split("T")[0],
+        treasuryId: "",
+        amount: 0,
+        expenseCategoryId: "",
+        notes: "",
+        description: ""
+      });
+      fetchPayments();
+    } catch (error) {
+      console.error("Error creating payment:", error);
+    }
+  };
+
+  return (
+    <Paper sx={{ p: 3 }}>
+      <Typography variant="h5" sx={{ mb: 3, fontWeight: 600 }}>
+        {t("paymentVouchersTitle")}
+      </Typography>
+
+      <Paper sx={{ p: 3, mb: 3, bgcolor: "grey.50" }}>
+        <Typography variant="h6" sx={{ mb: 2 }}>
+          {t("newPaymentVoucher")}
+        </Typography>
+        <form onSubmit={handleSubmit}>
+          <Stack spacing={2}>
+            <Stack direction={{ xs: "column", sm: "row" }} spacing={2}>
+              <TextField
+                label={t("date")}
+                type="date"
+                fullWidth
+                required
+                value={form.date}
+                onChange={(e) => setForm({ ...form, date: e.target.value })}
+                InputLabelProps={{ shrink: true }}
+              />
+              <FormControl fullWidth required>
+                <InputLabel>{t("treasury")}</InputLabel>
+                <Select
+                  value={form.treasuryId}
+                  label={t("treasury")}
+                  onChange={(e) => setForm({ ...form, treasuryId: e.target.value })}
+                >
+                  {treasuries.map((treasury) => (
+                    <MenuItem key={treasury.id} value={treasury.id}>
+                      {treasury.name}
+                    </MenuItem>
+                  ))}
+                </Select>
+              </FormControl>
+            </Stack>
+
+            <Stack direction={{ xs: "column", sm: "row" }} spacing={2}>
+              <TextField
+                label={t("amount")}
+                type="number"
+                fullWidth
+                required
+                value={form.amount}
+                onChange={(e) => setForm({ ...form, amount: Number(e.target.value) })}
+                inputProps={{ min: 0, step: "0.01" }}
+              />
+              <FormControl fullWidth required>
+                <InputLabel>{t("expenseCategory")}</InputLabel>
+                <Select
+                  value={form.expenseCategoryId}
+                  label={t("expenseCategory")}
+                  onChange={(e) => setForm({ ...form, expenseCategoryId: e.target.value })}
+                >
+                  {expenseCategories.map((category) => (
+                    <MenuItem key={category.id} value={category.id}>
+                      {category.name}
+                    </MenuItem>
+                  ))}
+                </Select>
+              </FormControl>
+            </Stack>
+
+            <Stack direction={{ xs: "column", sm: "row" }} spacing={2}>
+              <TextField
+                label={t("paidTo")}
+                fullWidth
+                value={form.description}
+                onChange={(e) => setForm({ ...form, description: e.target.value })}
+              />
+            </Stack>
+
+            <TextField
+              label={t("notes")}
+              fullWidth
+              multiline
+              rows={2}
+              value={form.notes}
+              onChange={(e) => setForm({ ...form, notes: e.target.value })}
+            />
+
+            <Button type="submit" variant="contained" sx={{ alignSelf: "flex-start" }}>
+              {t("saveVoucher")}
+            </Button>
+          </Stack>
+        </form>
+      </Paper>
+
+      <Typography variant="h6" sx={{ mb: 2 }}>
+        {t("paymentVouchersTab")}
+      </Typography>
+      <Table>
+        <TableHead>
+          <TableRow>
+            <TableCell>{t("voucherNumber")}</TableCell>
+            <TableCell>{t("date")}</TableCell>
+            <TableCell>{t("treasury")}</TableCell>
+            <TableCell>{t("expenseCategory")}</TableCell>
+            <TableCell>{t("amount")}</TableCell>
+            <TableCell>{t("paidTo")}</TableCell>
+            <TableCell>{t("notes")}</TableCell>
+          </TableRow>
+        </TableHead>
+        <TableBody>
+          {payments.map((payment, index) => (
+            <TableRow key={payment.id}>
+              <TableCell>{payments.length - index}</TableCell>
+              <TableCell>{new Date(payment.date).toLocaleDateString()}</TableCell>
+              <TableCell>{payment.treasury.name}</TableCell>
+              <TableCell>{payment.expenseCategory?.name || "-"}</TableCell>
+              <TableCell>{payment.amount.toLocaleString()}</TableCell>
+              <TableCell>{payment.description || "-"}</TableCell>
+              <TableCell>{payment.notes || "-"}</TableCell>
+            </TableRow>
+          ))}
+        </TableBody>
+      </Table>
+
+      <Snackbar
+        open={snackbar.open}
+        autoHideDuration={3000}
+        onClose={() => setSnackbar({ ...snackbar, open: false })}
+        anchorOrigin={{ vertical: "bottom", horizontal: "center" }}
+      >
+        <Alert severity="success" onClose={() => setSnackbar({ ...snackbar, open: false })}>
+          {snackbar.message}
+        </Alert>
+      </Snackbar>
+    </Paper>
+  );
+}
