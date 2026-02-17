@@ -1,5 +1,14 @@
 import { useEffect, useState } from "react";
 import api from "../api/axios";
+import { 
+  Paper,
+  Table,
+  TableHead,
+  TableRow,
+  TableCell,
+  TableBody,
+  Typography
+} from "@mui/material";
 import { useTranslation } from "react-i18next";
 
 export default function Inventory() {
@@ -11,29 +20,31 @@ export default function Inventory() {
   }, []);
 
   return (
-    <div>
-      <h2>{t("inventoryReport")}</h2>
+    <Paper sx={{ p: 3 }}>
+      <Typography variant="h5" fontWeight={700} sx={{ mb: 2 }}>
+        {t("inventoryReport")}
+      </Typography>
 
-      <table>
-        <thead>
-          <tr>
-            <th>{t("item")}</th>
-            <th>{t("received")}</th>
-            <th>{t("shipped")}</th>
-            <th>{t("balance")}</th>
-          </tr>
-        </thead>
-        <tbody>
+      <Table>
+        <TableHead>
+          <TableRow>
+            <TableCell>{t("item")}</TableCell>
+            <TableCell>{t("received")}</TableCell>
+            <TableCell>{t("shipped")}</TableCell>
+            <TableCell>{t("balance")}</TableCell>
+          </TableRow>
+        </TableHead>
+        <TableBody>
           {items.map((i: any) => (
-            <tr key={i.id}>
-              <td>{i.itemName}</td>
-              <td>{i.totalReceived}</td>
-              <td>{i.totalShipped}</td>
-              <td>{i.balance}</td>
-            </tr>
+            <TableRow key={i.id}>
+              <TableCell>{i.itemName}</TableCell>
+              <TableCell>{i.totalReceived}</TableCell>
+              <TableCell>{i.totalShipped}</TableCell>
+              <TableCell>{i.balance}</TableCell>
+            </TableRow>
           ))}
-        </tbody>
-      </table>
-    </div>
+        </TableBody>
+      </Table>
+    </Paper>
   );
 }
