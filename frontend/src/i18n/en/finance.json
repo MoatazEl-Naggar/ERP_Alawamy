@@ -31,6 +31,8 @@
   "paymentVouchersTab": "Payment Vouchers",
   "saveVoucher": "Save Voucher",
   "voucherSavedSuccess": "Voucher saved successfully",
+  "voucherSaveError": "Failed to save voucher. Please try again.",
+  "voucherLoadError": "Failed to load vouchers. Please try again.",
   "from": "From",
   "to": "To",
   "filter": "Filter",

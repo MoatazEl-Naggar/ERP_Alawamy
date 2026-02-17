@@ -29,6 +29,8 @@
   "paymentVouchersTab": "سندات الصرف",
   "saveVoucher": "حفظ السند",
   "voucherSavedSuccess": "تم حفظ السند بنجاح",
+  "voucherSaveError": "فشل حفظ السند. يرجى المحاولة مرة أخرى.",
+  "voucherLoadError": "فشل تحميل السندات. يرجى المحاولة مرة أخرى.",
   "from": "من",
   "to": "إلى",
   "filter": "تصفية",

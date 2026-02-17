@@ -109,7 +109,7 @@ export default function PaymentVouchers() {
       console.error("Error creating payment:", error);
       setSnackbar({ 
         open: true, 
-        message: "Failed to save voucher. Please try again.", 
+        message: t("voucherSaveError"), 
         severity: "error" 
       });
     }

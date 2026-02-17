@@ -91,7 +91,7 @@ export default function ReceiptVouchers() {
       console.error("Error creating receipt:", error);
       setSnackbar({ 
         open: true, 
-        message: "Failed to save voucher. Please try again.", 
+        message: t("voucherSaveError"), 
         severity: "error" 
       });
     }

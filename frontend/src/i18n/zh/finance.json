@@ -29,6 +29,8 @@
   "paymentVouchersTab": "付款凭证",
   "saveVoucher": "保存凭证",
   "voucherSavedSuccess": "凭证保存成功",
+  "voucherSaveError": "保存凭证失败。请重试。",
+  "voucherLoadError": "加载凭证失败。请重试。",
   "from": "从",
   "to": "到",
   "filter": "筛选",

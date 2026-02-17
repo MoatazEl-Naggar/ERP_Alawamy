@@ -14,7 +14,8 @@ import {
   TextField,
   Button,
   Typography,
-  Divider
+  Divider,
+  Alert
 } from "@mui/material";
 import { useTranslation } from "react-i18next";
 
@@ -53,15 +54,28 @@ export default function VoucherReview() {
   const [payments, setPayments] = useState<PaymentVoucher[]>([]);
   const [dateFrom, setDateFrom] = useState("");
   const [dateTo, setDateTo] = useState("");
+  const [error, setError] = useState<string | null>(null);
 
   const fetchReceipts = async () => {
-    const res = await api.get("/receipts");
-    setReceipts(res.data);
+    try {
+      const res = await api.get("/receipts");
+      setReceipts(res.data);
+      setError(null);
+    } catch (err) {
+      console.error("Error fetching receipts:", err);
+      setError(t("voucherLoadError"));
+    }
   };
 
   const fetchPayments = async () => {
-    const res = await api.get("/payments");
-    setPayments(res.data);
+    try {
+      const res = await api.get("/payments");
+      setPayments(res.data);
+      setError(null);
+    } catch (err) {
+      console.error("Error fetching payments:", err);
+      setError(t("voucherLoadError"));
+    }
   };
 
   useEffect(() => {
@@ -69,7 +83,7 @@ export default function VoucherReview() {
     fetchPayments();
   }, []);
 
-  const filterByDate = (vouchers: any[]) => {
+  const filterByDate = <T extends { date: string }>(vouchers: T[]): T[] => {
     if (!dateFrom && !dateTo) return vouchers;
     
     return vouchers.filter((v) => {
@@ -105,6 +119,12 @@ export default function VoucherReview() {
       <Typography variant="h5" sx={{ mb: 3, fontWeight: 600 }}>
         {t("voucherReviewTitle")}
       </Typography>
+
+      {error && (
+        <Alert severity="error" sx={{ mb: 2 }} onClose={() => setError(null)}>
+          {error}
+        </Alert>
+      )}
 
       <Paper sx={{ p: 2, mb: 3, bgcolor: "grey.50" }}>
         <Stack direction={{ xs: "column", sm: "row" }} spacing={2} alignItems="center">
