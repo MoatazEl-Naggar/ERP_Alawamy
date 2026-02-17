@@ -84,13 +84,14 @@ model Treasury {
 }
 
 model ReceiptVoucher {
-  id         String   @id @default(uuid())
-  voucherNo  String
-  date       DateTime
-  treasuryId String
-  amount     Float
-  notes      String?
-  createdAt  DateTime @default(now())
+  id          String   @id @default(uuid())
+  voucherNo   String
+  date        DateTime
+  treasuryId  String
+  amount      Float
+  description String?
+  notes       String?
+  createdAt   DateTime @default(now())
 
   treasury Treasury @relation(fields: [treasuryId], references: [id], onDelete: Restrict)
 }
@@ -102,6 +103,7 @@ model PaymentVoucher {
   treasuryId        String
   expenseCategoryId String?
   amount            Float
+  description       String?
   notes             String?
   createdAt         DateTime @default(now())
 
