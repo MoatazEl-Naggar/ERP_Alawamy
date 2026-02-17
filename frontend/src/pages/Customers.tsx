@@ -112,8 +112,10 @@ export default function Customers() {
                 <TableCell>{c.phone}</TableCell>
                 <TableCell>{c.email}</TableCell>
                 <TableCell>
-                  <Button size="small" onClick={() => handleEdit(c)}>{t("edit")}</Button>
-                  <Button size="small" color="error" onClick={() => handleDelete(c.id!)}>{t("delete")}</Button>
+                  <Stack direction="row" spacing={1}>
+                    <Button size="small" onClick={() => handleEdit(c)}>{t("edit")}</Button>
+                    <Button size="small" color="error" onClick={() => handleDelete(c.id!)}>{t("delete")}</Button>
+                  </Stack>
                 </TableCell>
               </TableRow>
             ))}

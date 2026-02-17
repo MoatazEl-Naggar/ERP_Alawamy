@@ -12,7 +12,8 @@ import {
   TableRow,
   TableCell,
   TableBody,
-  Paper
+  Paper,
+  Stack
 } from "@mui/material";
 import { useTranslation } from "react-i18next";
 interface Supplier {
@@ -105,8 +106,10 @@ export default function Suppliers() {
               <TableCell>{s.phone}</TableCell>
               <TableCell>{s.email}</TableCell>
               <TableCell>
-                <Button onClick={() => handleEdit(s)}>{t("edit")}</Button>
-                <Button color="error" onClick={() => handleDelete(s.id!)}>{t("delete")}</Button>
+                <Stack direction="row" spacing={1}>
+                  <Button onClick={() => handleEdit(s)}>{t("edit")}</Button>
+                  <Button color="error" onClick={() => handleDelete(s.id!)}>{t("delete")}</Button>
+                </Stack>
               </TableCell>
             </TableRow>
           ))}
