@@ -125,7 +125,7 @@ export default function VoucherReview() {
             InputLabelProps={{ shrink: true }}
           />
           <Button variant="outlined" size="small" onClick={handleClearFilter}>
-            {t("cancel")}
+            {t("clear")}
           </Button>
         </Stack>
       </Paper>

@@ -33,5 +33,6 @@
   "voucherSavedSuccess": "Voucher saved successfully",
   "from": "From",
   "to": "To",
-  "filter": "Filter"
+  "filter": "Filter",
+  "clear": "Clear"
 }

@@ -41,7 +41,11 @@ export default function ReceiptVouchers() {
   const { t } = useTranslation();
   const [receipts, setReceipts] = useState<ReceiptVoucher[]>([]);
   const [treasuries, setTreasuries] = useState<Treasury[]>([]);
-  const [snackbar, setSnackbar] = useState({ open: false, message: "" });
+  const [snackbar, setSnackbar] = useState({ 
+    open: false, 
+    message: "", 
+    severity: "success" as "success" | "error" 
+  });
 
   const [form, setForm] = useState({
     date: new Date().toISOString().split("T")[0],
@@ -74,7 +78,7 @@ export default function ReceiptVouchers() {
         amount: Number(form.amount),
         date: new Date(form.date)
       });
-      setSnackbar({ open: true, message: t("voucherSavedSuccess") });
+      setSnackbar({ open: true, message: t("voucherSavedSuccess"), severity: "success" });
       setForm({
         date: new Date().toISOString().split("T")[0],
         treasuryId: "",
@@ -85,6 +89,11 @@ export default function ReceiptVouchers() {
       fetchReceipts();
     } catch (error) {
       console.error("Error creating receipt:", error);
+      setSnackbar({ 
+        open: true, 
+        message: "Failed to save voucher. Please try again.", 
+        severity: "error" 
+      });
     }
   };
 
@@ -194,7 +203,7 @@ export default function ReceiptVouchers() {
         onClose={() => setSnackbar({ ...snackbar, open: false })}
         anchorOrigin={{ vertical: "bottom", horizontal: "center" }}
       >
-        <Alert severity="success" onClose={() => setSnackbar({ ...snackbar, open: false })}>
+        <Alert severity={snackbar.severity} onClose={() => setSnackbar({ ...snackbar, open: false })}>
           {snackbar.message}
         </Alert>
       </Snackbar>

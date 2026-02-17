@@ -51,7 +51,11 @@ export default function PaymentVouchers() {
   const [payments, setPayments] = useState<PaymentVoucher[]>([]);
   const [treasuries, setTreasuries] = useState<Treasury[]>([]);
   const [expenseCategories, setExpenseCategories] = useState<ExpenseCategory[]>([]);
-  const [snackbar, setSnackbar] = useState({ open: false, message: "" });
+  const [snackbar, setSnackbar] = useState({ 
+    open: false, 
+    message: "", 
+    severity: "success" as "success" | "error" 
+  });
 
   const [form, setForm] = useState({
     date: new Date().toISOString().split("T")[0],
@@ -91,7 +95,7 @@ export default function PaymentVouchers() {
         amount: Number(form.amount),
         date: new Date(form.date)
       });
-      setSnackbar({ open: true, message: t("voucherSavedSuccess") });
+      setSnackbar({ open: true, message: t("voucherSavedSuccess"), severity: "success" });
       setForm({
         date: new Date().toISOString().split("T")[0],
         treasuryId: "",
@@ -103,6 +107,11 @@ export default function PaymentVouchers() {
       fetchPayments();
     } catch (error) {
       console.error("Error creating payment:", error);
+      setSnackbar({ 
+        open: true, 
+        message: "Failed to save voucher. Please try again.", 
+        severity: "error" 
+      });
     }
   };
 
@@ -231,7 +240,7 @@ export default function PaymentVouchers() {
         onClose={() => setSnackbar({ ...snackbar, open: false })}
         anchorOrigin={{ vertical: "bottom", horizontal: "center" }}
       >
-        <Alert severity="success" onClose={() => setSnackbar({ ...snackbar, open: false })}>
+        <Alert severity={snackbar.severity} onClose={() => setSnackbar({ ...snackbar, open: false })}>
           {snackbar.message}
         </Alert>
       </Snackbar>

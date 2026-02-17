@@ -31,5 +31,6 @@
   "voucherSavedSuccess": "تم حفظ السند بنجاح",
   "from": "من",
   "to": "إلى",
-  "filter": "تصفية"
+  "filter": "تصفية",
+  "clear": "مسح"
 }

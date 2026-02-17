@@ -31,5 +31,6 @@
   "voucherSavedSuccess": "凭证保存成功",
   "from": "从",
   "to": "到",
-  "filter": "筛选"
+  "filter": "筛选",
+  "clear": "清除"
 }
