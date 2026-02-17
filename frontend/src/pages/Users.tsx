@@ -13,7 +13,8 @@ import {
   TableRow,
   TableCell,
   TableBody,
-  Paper
+  Paper,
+  Stack
 } from "@mui/material";
 import { useTranslation } from "react-i18next";
 
@@ -98,8 +99,10 @@ export default function Users() {
               <TableCell>{u.username}</TableCell>
               <TableCell>{u.role}</TableCell>
               <TableCell>
-                <Button onClick={() => handleEdit(u)}>{t("edit")}</Button>
-                <Button color="error" onClick={() => handleDelete(u.id!)}>{t("delete")}</Button>
+                <Stack direction="row" spacing={1}>
+                  <Button onClick={() => handleEdit(u)}>{t("edit")}</Button>
+                  <Button color="error" onClick={() => handleDelete(u.id!)}>{t("delete")}</Button>
+                </Stack>
               </TableCell>
             </TableRow>
           ))}

@@ -12,7 +12,8 @@ import {
   TableRow,
   TableCell,
   TableBody,
-  Paper
+  Paper,
+  Stack
 } from "@mui/material";
 import { useTranslation } from "react-i18next";
 
@@ -102,8 +103,10 @@ export default function Expenses() {
               <TableCell>{e.number}</TableCell>
               <TableCell>{e.name}</TableCell>
               <TableCell>
-                <Button onClick={() => handleEdit(e)}>{t("edit")}</Button>
-                <Button color="error" onClick={() => handleDelete(e.id!)}>{t("delete")}</Button>
+                <Stack direction="row" spacing={1}>
+                  <Button onClick={() => handleEdit(e)}>{t("edit")}</Button>
+                  <Button color="error" onClick={() => handleDelete(e.id!)}>{t("delete")}</Button>
+                </Stack>
               </TableCell>
             </TableRow>
           ))}

@@ -12,7 +12,8 @@ import {
   TableRow,
   TableCell,
   TableBody,
-  Paper
+  Paper,
+  Stack
 } from "@mui/material";
 import { useTranslation } from "react-i18next";
 
@@ -96,8 +97,10 @@ export default function ItemsRegistration() {
               <TableCell>{item.itemName}</TableCell>
               <TableCell>{item.barcode || "-"}</TableCell>
               <TableCell>
-                <Button onClick={() => handleEdit(item)}>{t("edit")}</Button>
-                <Button color="error" onClick={() => handleDelete(item.id!)}>{t("delete")}</Button>
+                <Stack direction="row" spacing={1}>
+                  <Button onClick={() => handleEdit(item)}>{t("edit")}</Button>
+                  <Button color="error" onClick={() => handleDelete(item.id!)}>{t("delete")}</Button>
+                </Stack>
               </TableCell>
             </TableRow>
           ))}

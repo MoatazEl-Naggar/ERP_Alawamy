@@ -12,7 +12,8 @@ import {
   TableRow,
   TableCell,
   TableBody,
-  Paper
+  Paper,
+  Stack
 } from "@mui/material";
 import { useTranslation } from "react-i18next";
 
@@ -103,8 +104,10 @@ export default function ContainerRegistration() {
               <TableCell>{new Date(container.date).toLocaleDateString()}</TableCell>
               <TableCell>{container.notes || "-"}</TableCell>
               <TableCell>
-                <Button onClick={() => handleEdit(container)}>{t("edit")}</Button>
-                <Button color="error" onClick={() => handleDelete(container.id!)}>{t("delete")}</Button>
+                <Stack direction="row" spacing={1}>
+                  <Button onClick={() => handleEdit(container)}>{t("edit")}</Button>
+                  <Button color="error" onClick={() => handleDelete(container.id!)}>{t("delete")}</Button>
+                </Stack>
               </TableCell>
             </TableRow>
           ))}
