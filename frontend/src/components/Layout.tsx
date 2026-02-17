@@ -102,7 +102,7 @@ export default function Layout() {
           {openMenu === "registration" ? <ExpandLess /> : <ExpandMore />}
         </ListItemButton>
         <Collapse in={openMenu === "registration"} timeout="auto" unmountOnExit>
-          <List component="div" disablePadding sx={{ pl: 2 }}>
+          <List component="div" disablePadding sx={{ paddingInlineStart: 2 }}>
             {user?.role === "ADMIN" && (
               <ListItemButton selected={isSelected("/users")} onClick={() => navigateTo("/users")}>
                 <Person fontSize="small" sx={{ marginInlineEnd: 1 }} />
@@ -137,7 +137,7 @@ export default function Layout() {
         </ListItemButton>
 
         <Collapse in={openMenu === "transactions"} timeout="auto" unmountOnExit>
-          <List component="div" disablePadding sx={{ pl: 2 }}>
+          <List component="div" disablePadding sx={{ paddingInlineStart: 2 }}>
             <ListItemButton selected={isSelected("/purchases")} onClick={() => navigateTo("/purchases")}>
               <ListItemText primary={t("purchaseDraft")} />
             </ListItemButton>
@@ -160,14 +160,14 @@ export default function Layout() {
         </ListItemButton>
 
         <Collapse in={openMenu === "finance"} timeout="auto" unmountOnExit>
-          <List component="div" disablePadding sx={{ pl: 2 }}>
+          <List component="div" disablePadding sx={{ paddingInlineStart: 2 }}>
             <ListItemButton onClick={() => toggleSubMenu("financeSettings")}>
               <ListItemText primary={t("financialSettings")} />
               {openSubMenu === "financeSettings" ? <ExpandLess /> : <ExpandMore />}
             </ListItemButton>
 
             <Collapse in={openSubMenu === "financeSettings"} timeout="auto" unmountOnExit>
-              <List component="div" disablePadding sx={{ pl: 2 }}>
+              <List component="div" disablePadding sx={{ paddingInlineStart: 2 }}>
                 <ListItemButton selected={isSelected("/treasuries")} onClick={() => navigateTo("/treasuries")}>
                   <ListItemText primary={t("treasuries")} />
                 </ListItemButton>
@@ -183,7 +183,7 @@ export default function Layout() {
             </ListItemButton>
 
             <Collapse in={openSubMenu === "vouchers"} timeout="auto" unmountOnExit>
-              <List component="div" disablePadding sx={{ pl: 2 }}>
+              <List component="div" disablePadding sx={{ paddingInlineStart: 2 }}>
                 <ListItemButton onClick={() => navigateTo("/payment-vouchers")}>
                   <ListItemText primary={t("paymentVoucher")} />
                 </ListItemButton>
