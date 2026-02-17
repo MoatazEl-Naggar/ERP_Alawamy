@@ -89,7 +89,7 @@ export default function Layout() {
 
       <List sx={{ flexGrow: 1, px: 1, py: 1 }}>
         <ListItemButton selected={isSelected("/dashboard")} onClick={() => navigateTo("/dashboard")}>
-          <Dashboard fontSize="small" sx={{ mr: 1 }} />
+          <Dashboard fontSize="small" sx={{ marginInlineEnd: 1 }} />
           <ListItemText primary={t("dashboard")} />
         </ListItemButton>
 
@@ -102,27 +102,27 @@ export default function Layout() {
           {openMenu === "registration" ? <ExpandLess /> : <ExpandMore />}
         </ListItemButton>
         <Collapse in={openMenu === "registration"} timeout="auto" unmountOnExit>
-          <List component="div" disablePadding sx={{ pl: 2 }}>
+          <List component="div" disablePadding sx={{ paddingInlineStart: 2 }}>
             {user?.role === "ADMIN" && (
               <ListItemButton selected={isSelected("/users")} onClick={() => navigateTo("/users")}>
-                <Person fontSize="small" sx={{ mr: 1 }} />
+                <Person fontSize="small" sx={{ marginInlineEnd: 1 }} />
                 <ListItemText primary={t("usersRegistration")} />
               </ListItemButton>
             )}
             <ListItemButton selected={isSelected("/customers")} onClick={() => navigateTo("/customers")}>
-              <Business fontSize="small" sx={{ mr: 1 }} />
+              <Business fontSize="small" sx={{ marginInlineEnd: 1 }} />
               <ListItemText primary={t("customersRegistration")} />
             </ListItemButton>
             <ListItemButton selected={isSelected("/suppliers")} onClick={() => navigateTo("/suppliers")}>
-              <Business fontSize="small" sx={{ mr: 1 }} />
+              <Business fontSize="small" sx={{ marginInlineEnd: 1 }} />
               <ListItemText primary={t("suppliersRegistration")} />
             </ListItemButton>
             <ListItemButton selected={isSelected("/container-registration")} onClick={() => navigateTo("/container-registration")}>
-              <LocalShipping fontSize="small" sx={{ mr: 1 }} />
+              <LocalShipping fontSize="small" sx={{ marginInlineEnd: 1 }} />
               <ListItemText primary={t("containerRegistration")} />
             </ListItemButton>
             <ListItemButton selected={isSelected("/items-registration")} onClick={() => navigateTo("/items-registration")}>
-              <LocalShipping fontSize="small" sx={{ mr: 1 }} />
+              <LocalShipping fontSize="small" sx={{ marginInlineEnd: 1 }} />
               <ListItemText primary={t("itemsRegistration")} />
             </ListItemButton>
           </List>
@@ -137,7 +137,7 @@ export default function Layout() {
         </ListItemButton>
 
         <Collapse in={openMenu === "transactions"} timeout="auto" unmountOnExit>
-          <List component="div" disablePadding sx={{ pl: 2 }}>
+          <List component="div" disablePadding sx={{ paddingInlineStart: 2 }}>
             <ListItemButton selected={isSelected("/purchases")} onClick={() => navigateTo("/purchases")}>
               <ListItemText primary={t("purchaseDraft")} />
             </ListItemButton>
@@ -154,20 +154,20 @@ export default function Layout() {
           {t("financeManagement")}
         </ListSubheader> */}
         <ListItemButton onClick={() => toggleMenu("finance")}>
-          <AccountBalance fontSize="small" sx={{ mr: 1 }} />
+          <AccountBalance fontSize="small" sx={{ marginInlineEnd: 1 }} />
           <ListItemText primary={t("financeManagement")} />
           {openMenu === "finance" ? <ExpandLess /> : <ExpandMore />}
         </ListItemButton>
 
         <Collapse in={openMenu === "finance"} timeout="auto" unmountOnExit>
-          <List component="div" disablePadding sx={{ pl: 2 }}>
+          <List component="div" disablePadding sx={{ paddingInlineStart: 2 }}>
             <ListItemButton onClick={() => toggleSubMenu("financeSettings")}>
               <ListItemText primary={t("financialSettings")} />
               {openSubMenu === "financeSettings" ? <ExpandLess /> : <ExpandMore />}
             </ListItemButton>
 
             <Collapse in={openSubMenu === "financeSettings"} timeout="auto" unmountOnExit>
-              <List component="div" disablePadding sx={{ pl: 2 }}>
+              <List component="div" disablePadding sx={{ paddingInlineStart: 2 }}>
                 <ListItemButton selected={isSelected("/treasuries")} onClick={() => navigateTo("/treasuries")}>
                   <ListItemText primary={t("treasuries")} />
                 </ListItemButton>
@@ -183,7 +183,7 @@ export default function Layout() {
             </ListItemButton>
 
             <Collapse in={openSubMenu === "vouchers"} timeout="auto" unmountOnExit>
-              <List component="div" disablePadding sx={{ pl: 2 }}>
+              <List component="div" disablePadding sx={{ paddingInlineStart: 2 }}>
                 <ListItemButton onClick={() => navigateTo("/payment-vouchers")}>
                   <ListItemText primary={t("paymentVoucher")} />
                 </ListItemButton>
@@ -203,7 +203,7 @@ export default function Layout() {
         <Divider sx={{ my: 1 }} />
 
         <ListItemButton selected={isSelected("/reports")} onClick={() => navigateTo("/reports")}>
-          <Assessment fontSize="small" sx={{ mr: 1 }} />
+          <Assessment fontSize="small" sx={{ marginInlineEnd: 1 }} />
           <ListItemText primary={t("reportsMenu")} />
         </ListItemButton>
       </List>
@@ -221,7 +221,7 @@ export default function Layout() {
       >
         <Toolbar>
           {isMobile && (
-            <IconButton color="inherit" edge="start" onClick={toggleDrawer} sx={{ mr: 2 }}>
+            <IconButton color="inherit" edge="start" onClick={toggleDrawer} sx={{ marginInlineEnd: 2 }}>
               <MenuIcon />
             </IconButton>
           )}
@@ -286,8 +286,7 @@ export default function Layout() {
           flexGrow: 1,
           p: { xs: 2, md: 3 },
           mt: 8,
-          ml: !isMobile && !isRTL ? `${drawerWidth}px` : 0,
-          mr: !isMobile && isRTL ? `${drawerWidth}px` : 0
+          marginInlineStart: !isMobile ? `${drawerWidth}px` : 0
         }}
       >        
       <Outlet />
