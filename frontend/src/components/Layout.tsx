@@ -14,8 +14,7 @@ import {
   Divider,
   useMediaQuery,
   Stack,
-  Chip,
-  ListSubheader
+  Chip
 } from "@mui/material";
 import {
   ExpandLess,
@@ -85,9 +84,6 @@ export default function Layout() {
         <Typography variant="h6" fontWeight={700} color="primary.main">
           {t("appName")}
         </Typography>
-        <Typography variant="caption" color="text.secondary">
-          {t("dashboard")}
-        </Typography>
       </Box>
       <Divider />
 
@@ -97,9 +93,9 @@ export default function Layout() {
           <ListItemText primary={t("dashboard")} />
         </ListItemButton>
 
-        <ListSubheader sx={{ bgcolor: "transparent", lineHeight: 2.2, fontWeight: 700 }}>
+        {/* <ListSubheader sx={{ bgcolor: "transparent", lineHeight: 2.2, fontWeight: 700 }}>
           {t("registration")}
-        </ListSubheader>
+        </ListSubheader> */}
 
         <ListItemButton onClick={() => toggleMenu("registration")}>
           <ListItemText primary={t("registration")} />
@@ -132,9 +128,9 @@ export default function Layout() {
           </List>
         </Collapse>
 
-        <ListSubheader sx={{ bgcolor: "transparent", lineHeight: 2.2, fontWeight: 700 }}>
+        {/* <ListSubheader sx={{ bgcolor: "transparent", lineHeight: 2.2, fontWeight: 700 }}>
         {t("transactions")}
-        </ListSubheader>
+        </ListSubheader> */}
         <ListItemButton onClick={() => toggleMenu("transactions")}>
           <ListItemText primary={t("transactions")} />
           {openMenu === "transactions" ? <ExpandLess /> : <ExpandMore />}
@@ -154,9 +150,9 @@ export default function Layout() {
           </List>
         </Collapse>
 
-        <ListSubheader sx={{ bgcolor: "transparent", lineHeight: 2.2, fontWeight: 700 }}>
+        {/* <ListSubheader sx={{ bgcolor: "transparent", lineHeight: 2.2, fontWeight: 700 }}>
           {t("financeManagement")}
-        </ListSubheader>
+        </ListSubheader> */}
         <ListItemButton onClick={() => toggleMenu("finance")}>
           <AccountBalance fontSize="small" sx={{ mr: 1 }} />
           <ListItemText primary={t("financeManagement")} />
@@ -259,7 +255,12 @@ export default function Layout() {
                   <span>AR</span>
                 </Stack>
               </MenuItem>
-              <MenuItem value="zh">中文</MenuItem>
+              <MenuItem value="zh">
+                <Stack direction="row" spacing={1} alignItems="center">
+                  <Language fontSize="small" />
+                  <span>中文</span>
+                </Stack>
+              </MenuItem>
             </Select>
 
             <IconButton color="inherit" onClick={logout}>

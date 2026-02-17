@@ -1,0 +1,76 @@
+/* RTL Text Direction */
+html[dir="rtl"] {
+  direction: rtl;
+  text-align: right;
+}
+
+html[dir="ltr"] {
+  direction: ltr;
+  text-align: left;
+}
+
+/* Margin & Padding Adjustments */
+html[dir="rtl"] .container {
+  margin-right: 0;
+  margin-left: auto;
+}
+
+html[dir="ltr"] .container {
+  margin-left: 0;
+  margin-right: auto;
+}
+
+/* Flexbox Adjustments */
+html[dir="rtl"] .flex-row {
+  flex-direction: row-reverse;
+}
+
+/* Input Fields */
+html[dir="rtl"] input,
+html[dir="rtl"] textarea {
+  text-align: right;
+  direction: rtl;
+}
+
+html[dir="ltr"] input,
+html[dir="ltr"] textarea {
+  text-align: left;
+  direction: ltr;
+}
+
+/* Sidebar/Navigation */
+html[dir="rtl"] .sidebar {
+  right: 0;
+  left: auto;
+  border-right: none;
+  border-left: 1px solid #e0e0e0;
+}
+
+html[dir="ltr"] .sidebar {
+  left: 0;
+  right: auto;
+  border-left: none;
+  border-right: 1px solid #e0e0e0;
+}
+
+/* Buttons with Icons */
+html[dir="rtl"] .btn-icon {
+  margin-right: auto;
+  margin-left: 0.5rem;
+}
+
+html[dir="ltr"] .btn-icon {
+  margin-left: auto;
+  margin-right: 0.5rem;
+}
+
+/* Dropdown Menus */
+html[dir="rtl"] .dropdown-menu {
+  left: auto;
+  right: 0;
+}
+
+html[dir="ltr"] .dropdown-menu {
+  right: auto;
+  left: 0;
+}
