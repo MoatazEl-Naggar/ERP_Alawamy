@@ -9,7 +9,7 @@
  import Purchases from "./pages/Purchases";
  import Receiving from "./pages/Receiving";
  import Shipments from "./pages/Shipments";
-import ContainerRegistration from "./pages/ContainerRegistration";
+ import ContainerRegistration from "./pages/ContainerRegistration";
  import Treasuries from "./pages/Treasuries";
  import Expenses from "./pages/Expenses";
  import Inventory from "./pages/Inventory";

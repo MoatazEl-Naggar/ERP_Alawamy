@@ -12,7 +12,10 @@ import {
   TableRow,
   TableCell,
   TableBody,
-  Paper
+  Paper,
+  Stack,
+  Typography,
+  TableContainer
 } from "@mui/material";
 import { useTranslation } from "react-i18next";
 
@@ -83,40 +86,42 @@ export default function Customers() {
 
   return (
     <Paper sx={{ p: 3 }}>
-      <h2>{t("customersTitle")}</h2>
+      <Stack direction={{ xs: "column", sm: "row" }} justifyContent="space-between" alignItems={{ xs: "start", sm: "center" }} sx={{ mb: 2 }} spacing={1}>
+        <Typography variant="h5" fontWeight={700}>{t("customersTitle")}</Typography>
+        <Button variant="contained" onClick={handleOpenCreate}>
+          {t("addCustomer")}
+        </Button>
+      </Stack>
 
-      <Button variant="contained" onClick={handleOpenCreate} sx={{ mb: 2 }}>
-        {t("addCustomer")}
-      </Button>
-
-      <Table>
-        <TableHead>
-          <TableRow>
-            <TableCell>{t("number")}</TableCell>
-            <TableCell>{t("name")}</TableCell>
-            <TableCell>{t("phone")}</TableCell>
-            <TableCell>{t("email")}</TableCell>
-            <TableCell>{t("actions")}</TableCell>
-          </TableRow>
-        </TableHead>
-        <TableBody>
-          {customers.map(c => (
-            <TableRow key={c.id}>
-              <TableCell>{c.customerNumber}</TableCell>
-              <TableCell>{c.name}</TableCell>
-              <TableCell>{c.phone}</TableCell>
-              <TableCell>{c.email}</TableCell>
-              <TableCell>
-                <Button onClick={() => handleEdit(c)}>{t("edit")}</Button>
-                <Button color="error" onClick={() => handleDelete(c.id!)}>{t("delete")}</Button>
-              </TableCell>
+      <TableContainer>
+        <Table>
+          <TableHead>
+            <TableRow>
+              <TableCell>{t("number")}</TableCell>
+              <TableCell>{t("name")}</TableCell>
+              <TableCell>{t("phone")}</TableCell>
+              <TableCell>{t("email")}</TableCell>
+              <TableCell>{t("actions")}</TableCell>
             </TableRow>
-          ))}
-        </TableBody>
-      </Table>
+          </TableHead>
+          <TableBody>
+            {customers.map((c) => (
+              <TableRow key={c.id} hover>
+                <TableCell>{c.customerNumber}</TableCell>
+                <TableCell>{c.name}</TableCell>
+                <TableCell>{c.phone}</TableCell>
+                <TableCell>{c.email}</TableCell>
+                <TableCell>
+                  <Button size="small" onClick={() => handleEdit(c)}>{t("edit")}</Button>
+                  <Button size="small" color="error" onClick={() => handleDelete(c.id!)}>{t("delete")}</Button>
+                </TableCell>
+              </TableRow>
+            ))}
+          </TableBody>
+        </Table>
+      </TableContainer>
 
-      {/* Add/Edit Dialog */}
-      <Dialog open={open} onClose={handleCloseDialog} fullWidth>
+      <Dialog open={open} onClose={handleCloseDialog} fullWidth maxWidth="sm">
         <DialogTitle>{form.id ? t("editCustomer") : t("addCustomer")}</DialogTitle>
         <DialogContent>
           <TextField
@@ -124,42 +129,42 @@ export default function Customers() {
             fullWidth
             margin="dense"
             value={form.customerNumber}
-            onChange={e => setForm({ ...form, customerNumber: e.target.value })}
+            onChange={(e) => setForm({ ...form, customerNumber: e.target.value })}
           />
           <TextField
             label={t("name")}
             fullWidth
             margin="dense"
             value={form.name}
-            onChange={e => setForm({ ...form, name: e.target.value })}
+            onChange={(e) => setForm({ ...form, name: e.target.value })}
           />
           <TextField
             label={t("phone")}
             fullWidth
             margin="dense"
             value={form.phone}
-            onChange={e => setForm({ ...form, phone: e.target.value })}
+            onChange={(e) => setForm({ ...form, phone: e.target.value })}
           />
           <TextField
             label={t("address")}
             fullWidth
             margin="dense"
             value={form.address}
-            onChange={e => setForm({ ...form, address: e.target.value })}
+            onChange={(e) => setForm({ ...form, address: e.target.value })}
           />
           <TextField
             label={t("email")}
             fullWidth
             margin="dense"
             value={form.email}
-            onChange={e => setForm({ ...form, email: e.target.value })}
+            onChange={(e) => setForm({ ...form, email: e.target.value })}
           />
           <TextField
             label={t("accountNumber")}
             fullWidth
             margin="dense"
             value={form.accountNumber}
-            onChange={e => setForm({ ...form, accountNumber: e.target.value })}
+            onChange={(e) => setForm({ ...form, accountNumber: e.target.value })}
           />
         </DialogContent>
         <DialogActions>
