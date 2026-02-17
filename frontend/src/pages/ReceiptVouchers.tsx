@@ -56,13 +56,21 @@ export default function ReceiptVouchers() {
   });
 
   const fetchReceipts = async () => {
-    const res = await api.get("/receipts");
-    setReceipts(res.data);
+    try {
+      const res = await api.get("/receipts");
+      setReceipts(res.data);
+    } catch (error) {
+      console.error("Error fetching receipts:", error);
+    }
   };
 
   const fetchTreasuries = async () => {
-    const res = await api.get("/treasuries");
-    setTreasuries(res.data);
+    try {
+      const res = await api.get("/treasuries");
+      setTreasuries(res.data);
+    } catch (error) {
+      console.error("Error fetching treasuries:", error);
+    }
   };
 
   useEffect(() => {

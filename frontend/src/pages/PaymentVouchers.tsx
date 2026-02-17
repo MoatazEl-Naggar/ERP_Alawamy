@@ -67,18 +67,30 @@ export default function PaymentVouchers() {
   });
 
   const fetchPayments = async () => {
-    const res = await api.get("/payments");
-    setPayments(res.data);
+    try {
+      const res = await api.get("/payments");
+      setPayments(res.data);
+    } catch (error) {
+      console.error("Error fetching payments:", error);
+    }
   };
 
   const fetchTreasuries = async () => {
-    const res = await api.get("/treasuries");
-    setTreasuries(res.data);
+    try {
+      const res = await api.get("/treasuries");
+      setTreasuries(res.data);
+    } catch (error) {
+      console.error("Error fetching treasuries:", error);
+    }
   };
 
   const fetchExpenseCategories = async () => {
-    const res = await api.get("/expenses");
-    setExpenseCategories(res.data);
+    try {
+      const res = await api.get("/expenses");
+      setExpenseCategories(res.data);
+    } catch (error) {
+      console.error("Error fetching expense categories:", error);
+    }
   };
 
   useEffect(() => {
