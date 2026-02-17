@@ -12,6 +12,8 @@ router.get("/treasuries", authenticate, checkPermission("TREASURY", "view"), tre
 
 // Vouchers
 router.post("/receipts", authenticate, checkPermission("FINANCE", "add"), voucher.createReceipt);
+router.get("/receipts", authenticate, checkPermission("FINANCE", "view"), voucher.getReceipts);
 router.post("/payments", authenticate, checkPermission("FINANCE", "add"), voucher.createPayment);
+router.get("/payments", authenticate, checkPermission("FINANCE", "view"), voucher.getPayments);
 
 export default router;

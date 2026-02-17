@@ -12,5 +12,26 @@
   "type": "Type",
   "expense": "Expense",
   "expenseSummary": "Expense Summary",
-  "expenseTypeHint": "salary / general / etc"
+  "expenseTypeHint": "salary / general / etc",
+
+  "receiptVouchersTitle": "Receipt Vouchers",
+  "paymentVouchersTitle": "Payment Vouchers",
+  "voucherReviewTitle": "Voucher Review",
+  "newReceiptVoucher": "New Receipt Voucher",
+  "newPaymentVoucher": "New Payment Voucher",
+  "voucherNumber": "Voucher Number",
+  "receivedFrom": "Received From",
+  "paidTo": "Paid To",
+  "expenseCategory": "Expense Category",
+  "treasury": "Treasury",
+  "totalReceipts": "Total Receipts",
+  "totalPayments": "Total Payments",
+  "netAmount": "Net Amount",
+  "receiptVouchersTab": "Receipt Vouchers",
+  "paymentVouchersTab": "Payment Vouchers",
+  "saveVoucher": "Save Voucher",
+  "voucherSavedSuccess": "Voucher saved successfully",
+  "from": "From",
+  "to": "To",
+  "filter": "Filter"
 }

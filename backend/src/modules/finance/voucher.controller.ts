@@ -8,3 +8,11 @@ export const createReceipt = async (req: Request, res: Response) => {
 export const createPayment = async (req: Request, res: Response) => {
   res.json(await service.createPayment(req.body));
 };
+
+export const getReceipts = async (req: Request, res: Response) => {
+  res.json(await service.getReceipts());
+};
+
+export const getPayments = async (req: Request, res: Response) => {
+  res.json(await service.getPayments());
+};

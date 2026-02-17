@@ -25,3 +25,17 @@ export const createPayment = async (data: any) => {
 
   return prisma.paymentVoucher.create({ data });
 };
+
+// Get all receipts
+export const getReceipts = () =>
+  prisma.receiptVoucher.findMany({ 
+    orderBy: { date: "desc" }, 
+    include: { treasury: true } 
+  });
+
+// Get all payments
+export const getPayments = () =>
+  prisma.paymentVoucher.findMany({ 
+    orderBy: { date: "desc" }, 
+    include: { treasury: true, expenseCategory: true } 
+  });
