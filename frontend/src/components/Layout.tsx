@@ -1,33 +1,11 @@
 import {
-  AppBar,
-  Toolbar,
-  Typography,
-  Drawer,
-  List,
-  ListItemButton,
-  ListItemText,
-  Box,
-  IconButton,
-  Select,
-  MenuItem,
-  Collapse,
-  Divider,
-  useMediaQuery,
-  Stack,
-  Chip
+  AppBar, Toolbar, Typography, Drawer, List, ListItemButton,
+  ListItemText, Box, IconButton, Select, MenuItem, Collapse,
+  Divider, useMediaQuery, Stack, Chip
 } from "@mui/material";
 import {
-  ExpandLess,
-  ExpandMore,
-  Menu as MenuIcon,
-  Dashboard,
-  Logout,
-  Language,
-  Person,
-  Business,
-  LocalShipping,
-  AccountBalance,
-  Assessment
+  ExpandLess, ExpandMore, Menu as MenuIcon, Dashboard as DashboardIcon,
+  Logout, Language, Person, Business, LocalShipping, AccountBalance, Assessment
 } from "@mui/icons-material";
 import { useLocation, useNavigate, Outlet } from "react-router-dom";
 import { useAuth } from "../auth/AuthContext";
@@ -49,26 +27,18 @@ export default function Layout() {
 
   const [mobileOpen, setMobileOpen] = useState(false);
   const [openMenu, setOpenMenu] = useState<string | null>(null);
-  const [openSubMenu, setOpenSubMenu] = useState<string | null>(null);
 
   const toggleDrawer = () => setMobileOpen(!mobileOpen);
 
   const navigateTo = (path: string) => {
     navigate(path);
-    if (isMobile) {
-      setMobileOpen(false);
-    }
+    if (isMobile) setMobileOpen(false);
   };
 
   const isSelected = (path: string) => location.pathname === path;
 
   const toggleMenu = (menu: string) => {
     setOpenMenu(openMenu === menu ? null : menu);
-    setOpenSubMenu(null);
-  };
-
-  const toggleSubMenu = (menu: string) => {
-    setOpenSubMenu(openSubMenu === menu ? null : menu);
   };
 
   const handleLanguageChange = (lang: string) => {
@@ -83,23 +53,23 @@ export default function Layout() {
           {t("appName")}
         </Typography>
       </Box>
-      <Divider />
+      
 
       <List sx={{ flexGrow: 1, px: 1, py: 1 }}>
+
+        {/* Dashboard */}
         <ListItemButton selected={isSelected("/dashboard")} onClick={() => navigateTo("/dashboard")}>
-          <Dashboard fontSize="small" sx={{ marginInlineEnd: 1 }} />
+          <DashboardIcon fontSize="small" sx={{ marginInlineEnd: 1 }} />
           <ListItemText primary={t("dashboard")} />
         </ListItemButton>
-
-        {/* <ListSubheader sx={{ bgcolor: "transparent", lineHeight: 2.2, fontWeight: 700 }}>
-          {t("registration")}
-        </ListSubheader> */}
-
-        <ListItemButton onClick={() => toggleMenu("registration")}>
-          <ListItemText primary={t("registration")} />
-          {openMenu === "registration" ? <ExpandLess /> : <ExpandMore />}
+<Divider />
+{/* ===== MASTER DATA ===== */}
+        <ListItemButton onClick={() => toggleMenu("masterdata")}>
+          <Business fontSize="small" sx={{ marginInlineEnd: 1 }} />
+          <ListItemText primary={t("masterData")} />
+          {openMenu === "masterdata" ? <ExpandLess /> : <ExpandMore />}
         </ListItemButton>
-        <Collapse in={openMenu === "registration"} timeout="auto" unmountOnExit>
+        <Collapse in={openMenu === "masterdata"} timeout="auto" unmountOnExit>
           <List component="div" disablePadding sx={{ paddingInlineStart: 2 }}>
             {user?.role === "ADMIN" && (
               <ListItemButton selected={isSelected("/users")} onClick={() => navigateTo("/users")}>
@@ -107,33 +77,31 @@ export default function Layout() {
                 <ListItemText primary={t("usersRegistration")} />
               </ListItemButton>
             )}
+            <ListItemButton selected={isSelected("/treasuries")} onClick={() => navigateTo("/treasuries")}>
+              <ListItemText primary={t("treasuries")} />
+            </ListItemButton>
             <ListItemButton selected={isSelected("/customers")} onClick={() => navigateTo("/customers")}>
-              <Business fontSize="small" sx={{ marginInlineEnd: 1 }} />
               <ListItemText primary={t("customersRegistration")} />
             </ListItemButton>
+            <ListItemButton selected={isSelected("/items-registration")} onClick={() => navigateTo("/items-registration")}>
+              <ListItemText primary={t("itemsRegistration")} />
+            </ListItemButton>
             <ListItemButton selected={isSelected("/suppliers")} onClick={() => navigateTo("/suppliers")}>
-              <Business fontSize="small" sx={{ marginInlineEnd: 1 }} />
               <ListItemText primary={t("suppliersRegistration")} />
             </ListItemButton>
             <ListItemButton selected={isSelected("/container-registration")} onClick={() => navigateTo("/container-registration")}>
-              <LocalShipping fontSize="small" sx={{ marginInlineEnd: 1 }} />
               <ListItemText primary={t("containerRegistration")} />
-            </ListItemButton>
-            <ListItemButton selected={isSelected("/items-registration")} onClick={() => navigateTo("/items-registration")}>
-              <LocalShipping fontSize="small" sx={{ marginInlineEnd: 1 }} />
-              <ListItemText primary={t("itemsRegistration")} />
             </ListItemButton>
           </List>
         </Collapse>
 
-        {/* <ListSubheader sx={{ bgcolor: "transparent", lineHeight: 2.2, fontWeight: 700 }}>
-        {t("transactions")}
-        </ListSubheader> */}
+        
+        {/* ===== TRANSACTIONS ===== */}
         <ListItemButton onClick={() => toggleMenu("transactions")}>
+          <LocalShipping fontSize="small" sx={{ marginInlineEnd: 1 }} />
           <ListItemText primary={t("transactions")} />
           {openMenu === "transactions" ? <ExpandLess /> : <ExpandMore />}
         </ListItemButton>
-
         <Collapse in={openMenu === "transactions"} timeout="auto" unmountOnExit>
           <List component="div" disablePadding sx={{ paddingInlineStart: 2 }}>
             <ListItemButton selected={isSelected("/purchases")} onClick={() => navigateTo("/purchases")}>
@@ -148,139 +116,79 @@ export default function Layout() {
           </List>
         </Collapse>
 
-        {/* <ListSubheader sx={{ bgcolor: "transparent", lineHeight: 2.2, fontWeight: 700 }}>
-          {t("financeManagement")}
-        </ListSubheader> */}
+        {/* ===== FINANCE ===== */}
         <ListItemButton onClick={() => toggleMenu("finance")}>
           <AccountBalance fontSize="small" sx={{ marginInlineEnd: 1 }} />
           <ListItemText primary={t("financeManagement")} />
           {openMenu === "finance" ? <ExpandLess /> : <ExpandMore />}
         </ListItemButton>
-
         <Collapse in={openMenu === "finance"} timeout="auto" unmountOnExit>
           <List component="div" disablePadding sx={{ paddingInlineStart: 2 }}>
-            <ListItemButton onClick={() => toggleSubMenu("financeSettings")}>
-              <ListItemText primary={t("financialSettings")} />
-              {openSubMenu === "financeSettings" ? <ExpandLess /> : <ExpandMore />}
+            <ListItemButton selected={isSelected("/expenses")} onClick={() => navigateTo("/expenses")}>
+              <ListItemText primary={t("voucherItems")} />
             </ListItemButton>
-
-            <Collapse in={openSubMenu === "financeSettings"} timeout="auto" unmountOnExit>
-              <List component="div" disablePadding sx={{ paddingInlineStart: 2 }}>
-                <ListItemButton selected={isSelected("/treasuries")} onClick={() => navigateTo("/treasuries")}>
-                  <ListItemText primary={t("treasuries")} />
-                </ListItemButton>
-                <ListItemButton selected={isSelected("/expenses")} onClick={() => navigateTo("/expenses")}>
-                  <ListItemText primary={t("expenseCategories")} />
-                </ListItemButton>
-              </List>
-            </Collapse>
-
-            <ListItemButton onClick={() => toggleSubMenu("vouchers")}>
-              <ListItemText primary={t("vouchers")} />
-              {openSubMenu === "vouchers" ? <ExpandLess /> : <ExpandMore />}
+            <ListItemButton selected={isSelected("/currencies")} onClick={() => navigateTo("/currencies")}>
+              <ListItemText primary={t("currencies")} />
             </ListItemButton>
-
-            <Collapse in={openSubMenu === "vouchers"} timeout="auto" unmountOnExit>
-              <List component="div" disablePadding sx={{ paddingInlineStart: 2 }}>
-                <ListItemButton onClick={() => navigateTo("/payment-vouchers")}>
-                  <ListItemText primary={t("paymentVoucher")} />
-                </ListItemButton>
-                <ListItemButton onClick={() => navigateTo("/receipt-vouchers")}>
-                  <ListItemText primary={t("receiptVoucher")} />
-                </ListItemButton>
-                {user?.role === "ADMIN" && (
-                  <ListItemButton onClick={() => navigateTo("/voucher-review")}>
-                    <ListItemText primary={t("voucherReview")} />
-                  </ListItemButton>
-                )}
-              </List>
-            </Collapse>
+            <ListItemButton selected={isSelected("/payment-vouchers")} onClick={() => navigateTo("/payment-vouchers")}>
+              <ListItemText primary={t("paymentVoucher")} />
+            </ListItemButton>
+            <ListItemButton selected={isSelected("/receipt-vouchers")} onClick={() => navigateTo("/receipt-vouchers")}>
+              <ListItemText primary={t("receiptVoucher")} />
+            </ListItemButton>
+            {/* {user?.role === "ADMIN" && (
+              <ListItemButton selected={isSelected("/voucher-review")} onClick={() => navigateTo("/voucher-review")}>
+                <ListItemText primary={t("voucherReview")} />
+              </ListItemButton>
+            )} */}
           </List>
         </Collapse>
 
         <Divider sx={{ my: 1 }} />
 
+        
+
+        {/* Reports */}
         <ListItemButton selected={isSelected("/reports")} onClick={() => navigateTo("/reports")}>
           <Assessment fontSize="small" sx={{ marginInlineEnd: 1 }} />
           <ListItemText primary={t("reportsMenu")} />
         </ListItemButton>
+
       </List>
     </Box>
   );
 
   return (
     <Box sx={{ display: "flex", minHeight: "100vh" }}>
-      <AppBar
-        position="fixed"
-        sx={{
-          zIndex: 1300,
-          background: "linear-gradient(100deg, #1f4ea3 5%, #406bc0 50%, #00a389 110%)"
-        }}
-      >
+      <AppBar position="fixed" sx={{ zIndex: 1300, background: "linear-gradient(100deg, #1f4ea3 5%, #406bc0 50%, #00a389 110%)" }}>
         <Toolbar>
           {isMobile && (
             <IconButton color="inherit" edge="start" onClick={toggleDrawer} sx={{ marginInlineEnd: 2 }}>
               <MenuIcon />
             </IconButton>
           )}
-
-          <Typography variant="h6" sx={{ flexGrow: 1, fontWeight: 700 }}>
-            {t("appName")}
-          </Typography>
-
+          <Typography variant="h6" sx={{ flexGrow: 1, fontWeight: 700 }}>{t("appName")}</Typography>
           <Stack direction="row" spacing={1.5} alignItems="center" sx={{ gap: 1.5 }}>
             <Chip
               size="small"
-              sx={{
-                bgcolor: "rgba(255,255,255,0.18)",
-                color: "white",
-                px: 0.5,
-                marginInlineEnd: isRTL ? 0 : 0.5,
-                marginInlineStart: isRTL ? 0.5 : 0
-              }}
+              sx={{ bgcolor: "rgba(255,255,255,0.18)", color: "white", px: 0.5 }}
               label={
-                <Stack
-                  direction={isRTL ? "row-reverse" : "row"}
-                  alignItems="center"
-                  sx={{ gap: 0.8 }}
-                >
+                <Stack direction={isRTL ? "row-reverse" : "row"} alignItems="center" sx={{ gap: 0.8 }}>
                   <Person sx={{ fontSize: 18 }} />
-                  <span style={{ fontWeight: 500 }}>
-                    {user?.username ?? "User"}
-                  </span>
+                  <span style={{ fontWeight: 500 }}>{user?.username ?? "User"}</span>
                 </Stack>
               }
             />
-
             <Select
               size="small"
               value={i18n.language}
               onChange={(e) => handleLanguageChange(e.target.value)}
-              sx={{
-                minWidth: 84,
-                color: "white",
-                border: "1px solid rgba(255,255,255,0.3)",
-                borderRadius: 2,
-                "& .MuiSvgIcon-root": { color: "white" }
-              }}
+              sx={{ minWidth: 84, color: "white", border: "1px solid rgba(255,255,255,0.3)", borderRadius: 2, "& .MuiSvgIcon-root": { color: "white" } }}
             >
-              <MenuItem value="ar">
-                <Stack direction="row" spacing={1} alignItems="center">
-                  <Language fontSize="small" />
-                  <span>AR</span>
-                </Stack>
-              </MenuItem>
-              <MenuItem value="zh">
-                <Stack direction="row" spacing={1} alignItems="center">
-                  <Language fontSize="small" />
-                  <span>中文</span>
-                </Stack>
-              </MenuItem>
+              <MenuItem value="ar"><Stack direction="row" spacing={1} alignItems="center"><Language fontSize="small" /><span>AR</span></Stack></MenuItem>
+              <MenuItem value="zh"><Stack direction="row" spacing={1} alignItems="center"><Language fontSize="small" /><span>中文</span></Stack></MenuItem>
             </Select>
-
-            <IconButton color="inherit" onClick={logout}>
-              <Logout />
-            </IconButton>
+            <IconButton color="inherit" onClick={logout}><Logout /></IconButton>
           </Stack>
         </Toolbar>
       </AppBar>
@@ -295,17 +203,8 @@ export default function Layout() {
         </Drawer>
       )}
 
-      <Box
-        component="main"
-        sx={{
-          flexGrow: 1,
-          p: { xs: 2, md: 3 },
-          mt: 8,
-          ml: !isMobile && !isRTL ? `${drawerWidth}px` : 0,
-          mr: !isMobile && isRTL ? `${drawerWidth}px` : 0
-        }}
-      >        
-      <Outlet />
+      <Box component="main" sx={{ flexGrow: 1, p: { xs: 2, md: 3 }, mt: 8, ml: !isMobile && !isRTL ? `${drawerWidth}px` : 0, mr: !isMobile && isRTL ? `${drawerWidth}px` : 0 }}>
+        <Outlet />
       </Box>
     </Box>
   );

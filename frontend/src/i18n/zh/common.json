@@ -22,5 +22,10 @@
   "itemName": "商品名称",
   "barcode": "条码",
   "addItemRegistration": "新增商品",
-  "editItemRegistration": "编辑商品"
+  "editItemRegistration": "编辑商品",
+  "masterData": "主数据",
+  "voucherItems": "凭证项目",
+  "currencies": "货币汇率",
+  "paymentVoucher": "付款凭证",
+  "receiptVoucher": "收款凭证"
 }

@@ -22,5 +22,10 @@
   "itemName": "اسم الصنف",
   "barcode": "الباركود",
   "addItemRegistration": "إضافة صنف",
-  "editItemRegistration": "تعديل صنف"
+  "editItemRegistration": "تعديل صنف",
+  "masterData": "البيانات الأساسية",
+  "voucherItems": "بنود السندات",
+  "currencies": "العملات (سعر الصرف)",
+  "paymentVoucher": "سند صرف",
+  "receiptVoucher": "سند قبض"
 }

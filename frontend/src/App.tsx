@@ -20,108 +20,37 @@ import ItemsRegistration from "./pages/ItemsRegistration";
 import ReceiptVouchers from "./pages/ReceiptVouchers";
 import PaymentVouchers from "./pages/PaymentVouchers";
 import VoucherReview from "./pages/VoucherReview";
+import Currencies from "./pages/Currencies";
 
-/* ================= PRIVATE ROUTE ================= */
 function PrivateRoute() {
   const { user, isLoading } = useAuth();
-
-  // ✅ Show loading state while checking authentication
-  if (isLoading) {
-    return (
-      <Box
-        sx={{
-          display: "flex",
-          justifyContent: "center",
-          alignItems: "center",
-          minHeight: "100vh",
-        }}
-      >
-        <CircularProgress />
-      </Box>
-    );
-  }
-
-  // ✅ If no user, redirect to login (not to dashboard)
-  if (!user) {
-    return <Navigate to="/login" replace />;
-  }
-
+  if (isLoading) return <Box sx={{ display: "flex", justifyContent: "center", alignItems: "center", minHeight: "100vh" }}><CircularProgress /></Box>;
+  if (!user) return <Navigate to="/login" replace />;
   return <Outlet />;
 }
 
-/* ================= ADMIN ROUTE ================= */
 function AdminRoute() {
   const { user, isLoading } = useAuth();
-
-  if (isLoading) {
-    return (
-      <Box
-        sx={{
-          display: "flex",
-          justifyContent: "center",
-          alignItems: "center",
-          minHeight: "100vh",
-        }}
-      >
-        <CircularProgress />
-      </Box>
-    );
-  }
-
-  return user?.role === "ADMIN"
-    ? <Outlet />
-    : <Navigate to="/dashboard" replace />;
+  if (isLoading) return <Box sx={{ display: "flex", justifyContent: "center", alignItems: "center", minHeight: "100vh" }}><CircularProgress /></Box>;
+  return user?.role === "ADMIN" ? <Outlet /> : <Navigate to="/dashboard" replace />;
 }
 
-/* ================= APP ROUTES ================= */
 function AppRoutes() {
   const { user, isLoading } = useAuth();
-
-  // ✅ Show loading state while checking authentication
-  if (isLoading) {
-    return (
-      <Box
-        sx={{
-          display: "flex",
-          justifyContent: "center",
-          alignItems: "center",
-          minHeight: "100vh",
-        }}
-      >
-        <CircularProgress />
-      </Box>
-    );
-  }
+  if (isLoading) return <Box sx={{ display: "flex", justifyContent: "center", alignItems: "center", minHeight: "100vh" }}><CircularProgress /></Box>;
 
   return (
     <Routes>
-      {/* Login Page - accessible to everyone */}
       <Route path="/login" element={<Login />} />
+      <Route path="/" element={user ? <Navigate to="/dashboard" replace /> : <Navigate to="/login" replace />} />
 
-      {/* Default Route - redirect based on auth status */}
-      <Route
-        path="/"
-        element={
-          user ? (
-            <Navigate to="/dashboard" replace />
-          ) : (
-            <Navigate to="/login" replace />
-          )
-        }
-      />
-
-      {/* ================= PROTECTED ERP AREA ================= */}
       <Route element={<PrivateRoute />}>
         <Route element={<Layout />}>
           <Route path="/dashboard" element={<Dashboard />} />
-
-          {/* Admin Only */}
           <Route element={<AdminRoute />}>
             <Route path="/users" element={<Users />} />
             <Route path="/voucher-review" element={<VoucherReview />} />
           </Route>
-
-          {/* Normal Pages */}
           <Route path="/customers" element={<Customers />} />
           <Route path="/suppliers" element={<Suppliers />} />
           <Route path="/container-registration" element={<ContainerRegistration />} />
@@ -135,25 +64,15 @@ function AppRoutes() {
           <Route path="/reports" element={<Reports />} />
           <Route path="/receipt-vouchers" element={<ReceiptVouchers />} />
           <Route path="/payment-vouchers" element={<PaymentVouchers />} />
+          <Route path="/currencies" element={<Currencies />} />
         </Route>
       </Route>
 
-      {/* Catch all - redirect to login if not authenticated */}
-      <Route
-        path="*"
-        element={
-          user ? (
-            <Navigate to="/dashboard" replace />
-          ) : (
-            <Navigate to="/login" replace />
-          )
-        }
-      />
+      <Route path="*" element={user ? <Navigate to="/dashboard" replace /> : <Navigate to="/login" replace />} />
     </Routes>
   );
 }
 
-/* ================= APP WITH AUTH ================= */
 export default function App() {
   return (
     <AuthProvider>

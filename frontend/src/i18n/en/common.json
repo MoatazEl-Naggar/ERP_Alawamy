@@ -22,5 +22,10 @@
   "itemName": "Item Name",
   "barcode": "Barcode",
   "addItemRegistration": "Add Item",
-  "editItemRegistration": "Edit Item"
+  "editItemRegistration": "Edit Item",
+  "masterData": "Master Data",
+  "voucherItems": "Voucher Items",
+  "currencies": "Currencies",
+  "paymentVoucher": "Payment Voucher",
+  "receiptVoucher": "Receipt Voucher"
 }

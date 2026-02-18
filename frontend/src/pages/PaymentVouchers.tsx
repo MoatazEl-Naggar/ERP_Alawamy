@@ -1,540 +1,212 @@
 import { useEffect, useState } from "react";
 import api from "../api/axios";
 import {
-  Button,
-  TextField,
-  Table,
-  TableHead,
-  TableRow,
-  TableCell,
-  TableBody,
-  Paper,
-  Stack,
-  Select,
-  MenuItem,
-  FormControl,
-  InputLabel,
-  Snackbar,
-  Alert,
-  Typography,
-  Box,
-  Grid,
-  Divider
+  Button, TextField, Table, TableHead, TableRow, TableCell, TableBody,
+  Paper, Stack, Select, MenuItem, FormControl, InputLabel, Snackbar,
+  Alert, Typography, Box, Divider, Dialog, DialogTitle, DialogContent, DialogActions
 } from "@mui/material";
 import { useTranslation } from "react-i18next";
+import AddIcon from "@mui/icons-material/Add";
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
 import PrintIcon from "@mui/icons-material/Print";
 import SaveIcon from "@mui/icons-material/Save";
 
-interface Treasury {
-  id: string;
-  name: string;
-}
-
-interface ExpenseCategory {
-  id: string;
-  name: string;
-}
-
+interface Treasury { id: string; name: string; }
+interface ExpenseCategory { id: string; name: string; }
 interface PaymentVoucher {
-  id: string;
-  date: string;
-  voucherNumber: string;
-  amount: number;
-  notes?: string;
-  description?: string;
-  paidTo?: string;
-  exchangeRate?: number;
-  currency?: string;
-  treasury: {
-    id: string;
-    name: string;
-  };
-  expenseCategory?: {
-    id: string;
-    name: string;
-  };
+  id: string; date: string; voucherNumber: string; amount: number;
+  notes?: string; description?: string; paidTo?: string;
+  exchangeRate?: number; currency?: string;
+  treasury: { id: string; name: string; };
+  expenseCategory?: { id: string; name: string; };
 }
+
+const emptyForm = {
+  date: new Date().toISOString().split("T")[0],
+  voucherNumber: "", treasuryId: "", expenseCategoryId: "",
+  amount: 0, notes: "", description: "", paidTo: "",
+  exchangeRate: 1, currency: "جنيه"
+};
 
 export default function PaymentVouchers() {
   const { t } = useTranslation();
   const [payments, setPayments] = useState<PaymentVoucher[]>([]);
   const [treasuries, setTreasuries] = useState<Treasury[]>([]);
-  const [expenseCategories, setExpenseCategories] = useState<ExpenseCategory[]>([]);
-  const [snackbar, setSnackbar] = useState({ 
-    open: false, 
-    message: "", 
-    severity: "success" as "success" | "error" 
-  });
+  const [categories, setCategories] = useState<ExpenseCategory[]>([]);
+  const [dialogOpen, setDialogOpen] = useState(false);
   const [editingId, setEditingId] = useState<string | null>(null);
-
-  const [form, setForm] = useState({
-    date: new Date().toISOString().split("T")[0],
-    voucherNumber: "",
-    treasuryId: "",
-    amount: 0,
-    expenseCategoryId: "",
-    notes: "",
-    description: "",
-    paidTo: "",
-    exchangeRate: 1,
-    currency: "جنيه" // Egyptian Pound
-  });
-
-  const [headerValues, setHeaderValues] = useState({
-    date: new Date().toISOString().split("T")[0],
-    voucherNumber: "",
-    accountCode: "RB-25-0001",
-    amount: 0
-  });
+  const [form, setForm] = useState(emptyForm);
+  const [filterFrom, setFilterFrom] = useState("");
+  const [filterTo, setFilterTo] = useState("");
+  const [snackbar, setSnackbar] = useState({ open: false, message: "", severity: "success" as "success" | "error" });
 
   const fetchPayments = async () => {
     try {
-      const res = await api.get("/payments");
+      const params: any = {};
+      if (filterFrom) params.from = filterFrom;
+      if (filterTo) params.to = filterTo;
+      const res = await api.get("/payments", { params });
       setPayments(res.data);
-    } catch (error) {
-      console.error("Error fetching payments:", error);
-    }
-  };
-
-  const fetchTreasuries = async () => {
-    try {
-      const res = await api.get("/treasuries");
-      setTreasuries(res.data);
-    } catch (error) {
-      console.error("Error fetching treasuries:", error);
-    }
-  };
-
-  const fetchExpenseCategories = async () => {
-    try {
-      const res = await api.get("/expenses");
-      setExpenseCategories(res.data);
-    } catch (error) {
-      console.error("Error fetching expense categories:", error);
-    }
+    } catch { setSnackbar({ open: true, message: t("voucherLoadError"), severity: "error" }); }
   };
 
   useEffect(() => {
-    fetchPayments();
-    fetchTreasuries();
-    fetchExpenseCategories();
+    api.get("/treasuries").then(r => setTreasuries(r.data)).catch(console.error);
+    api.get("/expense-categories").then(r => setCategories(r.data)).catch(console.error);
   }, []);
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    try {
-      if (editingId) {
-        await api.put(`/payments/${editingId}`, {
-          ...form,
-          amount: Number(form.amount),
-          exchangeRate: Number(form.exchangeRate),
-          date: new Date(form.date)
-        });
-        setSnackbar({ open: true, message: t("voucherUpdatedSuccess"), severity: "success" });
-        setEditingId(null);
-      } else {
-        await api.post("/payments", {
-          ...form,
-          amount: Number(form.amount),
-          exchangeRate: Number(form.exchangeRate),
-          date: new Date(form.date)
-        });
-        setSnackbar({ open: true, message: t("voucherSavedSuccess"), severity: "success" });
-      }
-      setForm({
-        date: new Date().toISOString().split("T")[0],
-        voucherNumber: "",
-        treasuryId: "",
-        amount: 0,
-        expenseCategoryId: "",
-        notes: "",
-        description: "",
-        paidTo: "",
-        exchangeRate: 1,
-        currency: "جنيه"
-      });
-      fetchPayments();
-    } catch (error) {
-      console.error("Error saving payment:", error);
-      setSnackbar({ 
-        open: true, 
-        message: t("voucherSaveError"), 
-        severity: "error" 
-      });
-    }
+  useEffect(() => { fetchPayments(); }, [filterFrom, filterTo]);
+
+  const openCreate = () => { setForm(emptyForm); setEditingId(null); setDialogOpen(true); };
+  const openEdit = (p: PaymentVoucher) => {
+    setForm({ date: p.date.split("T")[0], voucherNumber: p.voucherNumber, treasuryId: p.treasury.id,
+      expenseCategoryId: p.expenseCategory?.id || "", amount: p.amount,
+      notes: p.notes || "", description: p.description || "", paidTo: p.paidTo || "",
+      exchangeRate: p.exchangeRate || 1, currency: p.currency || "جنيه" });
+    setEditingId(p.id); setDialogOpen(true);
   };
 
-  const handleEdit = (payment: PaymentVoucher) => {
-    setForm({
-      date: payment.date,
-      voucherNumber: payment.voucherNumber,
-      treasuryId: payment.treasury.id,
-      amount: payment.amount,
-      expenseCategoryId: payment.expenseCategory?.id || "",
-      notes: payment.notes || "",
-      description: payment.description || "",
-      paidTo: payment.paidTo || "",
-      exchangeRate: payment.exchangeRate || 1,
-      currency: payment.currency || "جنيه"
-    });
-    setEditingId(payment.id);
-    window.scrollTo({ top: 0, behavior: "smooth" });
+  const handleSave = async () => {
+    try {
+      const payload = { ...form, amount: Number(form.amount), exchangeRate: Number(form.exchangeRate),
+        date: new Date(form.date), expenseCategoryId: form.expenseCategoryId || null };
+      if (editingId) { await api.put(`/payments/${editingId}`, payload); setSnackbar({ open: true, message: t("voucherUpdatedSuccess"), severity: "success" }); }
+      else { await api.post("/payments", payload); setSnackbar({ open: true, message: t("voucherSavedSuccess"), severity: "success" }); }
+      setDialogOpen(false); fetchPayments();
+    } catch { setSnackbar({ open: true, message: t("voucherSaveError"), severity: "error" }); }
   };
 
   const handleDelete = async (id: string) => {
-    if (window.confirm(t("confirmDelete"))) {
-      try {
-        await api.delete(`/payments/${id}`);
-        setSnackbar({ open: true, message: t("voucherDeletedSuccess"), severity: "success" });
-        fetchPayments();
-      } catch (error) {
-        console.error("Error deleting payment:", error);
-        setSnackbar({ 
-          open: true, 
-          message: t("voucherDeleteError"), 
-          severity: "error" 
-        });
-      }
-    }
+    if (!window.confirm(t("confirmDelete"))) return;
+    try { await api.delete(`/payments/${id}`); setSnackbar({ open: true, message: t("voucherDeletedSuccess"), severity: "success" }); fetchPayments(); }
+    catch { setSnackbar({ open: true, message: t("voucherDeleteError"), severity: "error" }); }
   };
 
-  const handlePrint = (payment: PaymentVoucher) => {
-    const printWindow = window.open("", "", "width=800,height=600");
-    if (printWindow) {
-      printWindow.document.write(`
-        <html>
-          <head>
-            <title>${t("paymentVoucher")}</title>
-            <style>
-              body { font-family: Arial; direction: rtl; padding: 20px; }
-              .header { text-align: center; margin-bottom: 20px; }
-              .details { margin: 20px 0; }
-              .row { display: flex; justify-content: space-between; margin: 10px 0; }
-              table { width: 100%; border-collapse: collapse; margin: 20px 0; }
-              th, td { border: 1px solid #000; padding: 8px; text-align: right; }
-              th { background-color: #f0f0f0; }
-            </style>
-          </head>
-          <body>
-            <div class="header">
-              <h2>${t("paymentVoucher")}</h2>
-            </div>
-            <div class="details">
-              <div class="row">
-                <span><strong>${t("date")}:</strong> ${new Date(payment.date).toLocaleDateString("ar-EG")}</span>
-                <span><strong>${t("voucherNumber")}:</strong> ${payment.voucherNumber}</span>
-              </div>
-              <div class="row">
-                <span><strong>${t("treasury")}:</strong> ${payment.treasury.name}</span>
-                <span><strong>${t("amount")}:</strong> ${payment.amount.toLocaleString()} ${payment.currency}</span>
-              </div>
-              <div class="row">
-                <span><strong>${t("paidTo")}:</strong> ${payment.paidTo || "-"}</span>
-                <span><strong>${t("expenseCategory")}:</strong> ${payment.expenseCategory?.name || "-"}</span>
-              </div>
-              ${payment.exchangeRate !== 1 ? `
-              <div class="row">
-                <span><strong>${t("exchangeRate")}:</strong> ${payment.exchangeRate}</span>
-              </div>
-              ` : ""}
-              <div class="row">
-                <span><strong>${t("notes")}:</strong> ${payment.notes || "-"}</span>
-              </div>
-            </div>
-          </body>
-        </html>
-      `);
-      printWindow.document.close();
-      printWindow.print();
-    }
+  const handlePrint = (p: PaymentVoucher) => {
+    const w = window.open("", "", "width=800,height=600");
+    if (!w) return;
+    w.document.write(`<html><head><title>${t("paymentVoucher")}</title>
+      <style>body{font-family:Arial;direction:rtl;padding:20px}.row{display:flex;justify-content:space-between;margin:10px 0}</style></head>
+      <body><h2 style="text-align:center">${t("paymentVoucher")}</h2>
+      <div class="row"><span><b>${t("date")}:</b> ${new Date(p.date).toLocaleDateString("ar-EG")}</span><span><b>${t("voucherNumber")}:</b> ${p.voucherNumber}</span></div>
+      <div class="row"><span><b>${t("treasury")}:</b> ${p.treasury.name}</span><span><b>${t("amount")}:</b> ${p.amount.toLocaleString()} ${p.currency}</span></div>
+      <div class="row"><span><b>${t("paidTo")}:</b> ${p.paidTo || "-"}</span></div>
+      ${p.exchangeRate !== 1 ? `<div class="row"><span><b>${t("exchangeRate")}:</b> ${p.exchangeRate}</span></div>` : ""}
+      <div class="row"><span><b>${t("notes")}:</b> ${p.notes || "-"}</span></div>
+      </body></html>`);
+    w.document.close(); w.print();
   };
 
-  const totalAmount = payments.reduce((sum, p) => sum + p.amount, 0);
+  const total = payments.reduce((s, p) => s + p.amount, 0);
 
   return (
     <Paper sx={{ p: 3 }}>
-      <Typography variant="h4" sx={{ mb: 3, fontWeight: 700, textAlign: "center" }}>
-        {t("paymentVouchersTitle")}
-      </Typography>
+      <Typography variant="h5" fontWeight={700} sx={{ mb: 2 }}>{t("paymentVouchersTitle")}</Typography>
 
-      {/* Header Section with Key Information */}
-      <Paper sx={{ p: 3, mb: 3, bgcolor: "grey.100", border: "2px solid #1976d2" }}>
-        <Grid container spacing={2} sx={{ mb: 2 }}>
-          <Grid item xs={12} sm={6}>
-            <TextField
-              label={t("date")}
-              type="date"
-              size="small"
-              value={headerValues.date}
-              onChange={(e) => setHeaderValues({ ...headerValues, date: e.target.value })}
-              InputLabelProps={{ shrink: true }}
-              fullWidth
-            />
-          </Grid>
-          <Grid item xs={12} sm={6}>
-            <TextField
-              label={t("voucherNumber")}
-              size="small"
-              value={headerValues.voucherNumber}
-              onChange={(e) => setHeaderValues({ ...headerValues, voucherNumber: e.target.value })}
-              fullWidth
-            />
-          </Grid>
-          <Grid item xs={12} sm={6}>
-            <TextField
-              label={t("accountCode")}
-              size="small"
-              value={headerValues.accountCode}
-              onChange={(e) => setHeaderValues({ ...headerValues, accountCode: e.target.value })}
-              fullWidth
-            />
-          </Grid>
-          <Grid item xs={12} sm={6}>
-            <TextField
-              label={t("totalAmount")}
-              size="small"
-              type="number"
-              value={headerValues.amount}
-              onChange={(e) => setHeaderValues({ ...headerValues, amount: Number(e.target.value) })}
-              fullWidth
-            />
-          </Grid>
-        </Grid>
-      </Paper>
+      {/* Date Filter */}
+      <Stack direction={{ xs: "column", sm: "row" }} spacing={2} alignItems="center" sx={{ mb: 2 }}>
+        <TextField label={t("from")} type="date" size="small" value={filterFrom}
+          onChange={e => setFilterFrom(e.target.value)} InputLabelProps={{ shrink: true }} />
+        <TextField label={t("to")} type="date" size="small" value={filterTo}
+          onChange={e => setFilterTo(e.target.value)} InputLabelProps={{ shrink: true }} />
+        <Button variant="outlined" onClick={() => { setFilterFrom(""); setFilterTo(""); }}>{t("clear")}</Button>
+        <Box sx={{ flexGrow: 1 }} />
+        <Button variant="contained" startIcon={<AddIcon />} onClick={openCreate}>{t("newPaymentVoucher")}</Button>
+      </Stack>
 
-      <Divider sx={{ my: 3 }} />
+      <Divider sx={{ mb: 2 }} />
 
-      {/* Form Section */}
-      <Paper sx={{ p: 3, mb: 3, bgcolor: "grey.50" }}>
-        <Typography variant="h6" sx={{ mb: 2 }}>
-          {editingId ? t("editPaymentVoucher") : t("newPaymentVoucher")}
-        </Typography>
-        <form onSubmit={handleSubmit}>
-          <Stack spacing={2}>
-            <Stack direction={{ xs: "column", sm: "row" }} spacing={2}>
-              <TextField
-                label={t("date")}
-                type="date"
-                fullWidth
-                required
-                value={form.date}
-                onChange={(e) => setForm({ ...form, date: e.target.value })}
-                InputLabelProps={{ shrink: true }}
-              />
-              <TextField
-                label={t("voucherNumber")}
-                fullWidth
-                value={form.voucherNumber}
-                onChange={(e) => setForm({ ...form, voucherNumber: e.target.value })}
-              />
-            </Stack>
-
-            <Stack direction={{ xs: "column", sm: "row" }} spacing={2}>
-              <FormControl fullWidth required>
-                <InputLabel>{t("treasury")}</InputLabel>
-                <Select
-                  value={form.treasuryId}
-                  onChange={(e) => setForm({ ...form, treasuryId: e.target.value })}
-                  label={t("treasury")}
-                >
-                  {treasuries.map((treasury) => (
-                    <MenuItem key={treasury.id} value={treasury.id}>
-                      {treasury.name}
-                    </MenuItem>
-                  ))}
-                </Select>
-              </FormControl>
-              <TextField
-                label={t("amount")}
-                type="number"
-                fullWidth
-                required
-                value={form.amount}
-                onChange={(e) => setForm({ ...form, amount: parseFloat(e.target.value) })}
-              />
-            </Stack>
-
-            <Stack direction={{ xs: "column", sm: "row" }} spacing={2}>
-              <FormControl fullWidth>
-                <InputLabel>{t("expenseCategory")}</InputLabel>
-                <Select
-                  value={form.expenseCategoryId}
-                  onChange={(e) => setForm({ ...form, expenseCategoryId: e.target.value })}
-                  label={t("expenseCategory")}
-                >
-                  <MenuItem value="">{t("selectCategory")}</MenuItem>
-                  {expenseCategories.map((category) => (
-                    <MenuItem key={category.id} value={category.id}>
-                      {category.name}
-                    </MenuItem>
-                  ))}
-                </Select>
-              </FormControl>
-              <TextField
-                label={t("paidTo")}
-                fullWidth
-                value={form.paidTo}
-                onChange={(e) => setForm({ ...form, paidTo: e.target.value })}
-              />
-            </Stack>
-
-            <Stack direction={{ xs: "column", sm: "row" }} spacing={2}>
-              <TextField
-                label={t("currency")}
-                fullWidth
-                value={form.currency}
-                onChange={(e) => setForm({ ...form, currency: e.target.value })}
-              />
-              <TextField
-                label={t("exchangeRate")}
-                type="number"
-                fullWidth
-                step="0.01"
-                value={form.exchangeRate}
-                onChange={(e) => setForm({ ...form, exchangeRate: parseFloat(e.target.value) })}
-              />
-            </Stack>
-
-            <TextField
-              label={t("description")}
-              fullWidth
-              multiline
-              rows={2}
-              value={form.description}
-              onChange={(e) => setForm({ ...form, description: e.target.value })}
-            />
-
-            <TextField
-              label={t("notes")}
-              fullWidth
-              multiline
-              rows={2}
-              value={form.notes}
-              onChange={(e) => setForm({ ...form, notes: e.target.value })}
-            />
-
-            <Stack direction="row" spacing={2}>
-              <Button type="submit" variant="contained" startIcon={<SaveIcon />}>
-                {editingId ? t("update") : t("save")}
-              </Button>
-              {editingId && (
-                <Button 
-                  type="button" 
-                  variant="outlined" 
-                  onClick={() => {
-                    setEditingId(null);
-                    setForm({
-                      date: new Date().toISOString().split("T")[0],
-                      voucherNumber: "",
-                      treasuryId: "",
-                      amount: 0,
-                      expenseCategoryId: "",
-                      notes: "",
-                      description: "",
-                      paidTo: "",
-                      exchangeRate: 1,
-                      currency: "جنيه"
-                    });
-                  }}
-                >
-                  {t("cancel")}
-                </Button>
-              )}
-            </Stack>
-          </Stack>
-        </form>
-      </Paper>
-
-      <Divider sx={{ my: 3 }} />
-
-      {/* Table Section */}
-      <Typography variant="h6" sx={{ mb: 2 }}>
-        {t("paymentVouchersTab")} ({payments.length})
-      </Typography>
-      
       <Box sx={{ overflowX: "auto" }}>
-        <Table>
-          <TableHead sx={{ bgcolor: "#1976d2" }}>
+        <Table size="small">
+          <TableHead sx={{ bgcolor: "#f44336" }}>
             <TableRow>
-              <TableCell sx={{ color: "white", fontWeight: 600, width: "5%" }}>#</TableCell>
-              <TableCell sx={{ color: "white", fontWeight: 600 }}>{t("date")}</TableCell>
-              <TableCell sx={{ color: "white", fontWeight: 600 }}>{t("voucherNumber")}</TableCell>
-              <TableCell sx={{ color: "white", fontWeight: 600 }}>{t("treasury")}</TableCell>
-              <TableCell sx={{ color: "white", fontWeight: 600 }}>{t("amount")}</TableCell>
-              <TableCell sx={{ color: "white", fontWeight: 600 }}>{t("currency")}</TableCell>
-              <TableCell sx={{ color: "white", fontWeight: 600 }}>{t("exchangeRate")}</TableCell>
-              <TableCell sx={{ color: "white", fontWeight: 600 }}>{t("paidTo")}</TableCell>
-              <TableCell sx={{ color: "white", fontWeight: 600 }}>{t("expenseCategory")}</TableCell>
-              <TableCell sx={{ color: "white", fontWeight: 600 }}>{t("notes")}</TableCell>
-              <TableCell sx={{ color: "white", fontWeight: 600 }}>{t("actions")}</TableCell>
+              {["#", t("date"), t("voucherNumber"), t("treasury"), t("expenseCategory"), t("amount"), t("currency"), t("exchangeRate"), t("paidTo"), t("notes"), t("actions")]
+                .map(h => <TableCell key={h} sx={{ color: "white", fontWeight: 600 }}>{h}</TableCell>)}
             </TableRow>
           </TableHead>
           <TableBody>
-            {payments.map((payment, index) => (
-              <TableRow key={payment.id} sx={{ "&:hover": { bgcolor: "grey.100" } }}>
-                <TableCell>{payments.length - index}</TableCell>
-                <TableCell>{new Date(payment.date).toLocaleDateString("ar-EG")}</TableCell>
-                <TableCell>{payment.voucherNumber || "-"}</TableCell>
-                <TableCell>{payment.treasury.name}</TableCell>
-                <TableCell sx={{ fontWeight: 600 }}>{payment.amount.toLocaleString()}</TableCell>
-                <TableCell>{payment.currency || "-"}</TableCell>
-                <TableCell>{payment.exchangeRate || "-"}</TableCell>
-                <TableCell>{payment.paidTo || "-"}</TableCell>
-                <TableCell>{payment.expenseCategory?.name || "-"}</TableCell>
-                <TableCell>{payment.notes || "-"}</TableCell>
+            {payments.map((p, i) => (
+              <TableRow key={p.id} sx={{ "&:hover": { bgcolor: "grey.100" } }}>
+                <TableCell>{payments.length - i}</TableCell>
+                <TableCell>{new Date(p.date).toLocaleDateString("ar-EG")}</TableCell>
+                <TableCell>{p.voucherNumber || "-"}</TableCell>
+                <TableCell>{p.treasury.name}</TableCell>
+                <TableCell>{p.expenseCategory?.name || "-"}</TableCell>
+                <TableCell sx={{ fontWeight: 600 }}>{p.amount.toLocaleString()}</TableCell>
+                <TableCell>{p.currency || "-"}</TableCell>
+                <TableCell>{p.exchangeRate || "-"}</TableCell>
+                <TableCell>{p.paidTo || "-"}</TableCell>
+                <TableCell>{p.notes || "-"}</TableCell>
                 <TableCell>
-                  <Stack direction="row" spacing={1}>
-                    <Button
-                      size="small"
-                      variant="outlined"
-                      color="primary"
-                      startIcon={<EditIcon />}
-                      onClick={() => handleEdit(payment)}
-                    >
-                      {t("edit")}
-                    </Button>
-                    <Button
-                      size="small"
-                      variant="outlined"
-                      color="info"
-                      startIcon={<PrintIcon />}
-                      onClick={() => handlePrint(payment)}
-                    >
-                      {t("print")}
-                    </Button>
-                    <Button
-                      size="small"
-                      variant="outlined"
-                      color="error"
-                      startIcon={<DeleteIcon />}
-                      onClick={() => handleDelete(payment.id)}
-                    >
-                      {t("delete")}
-                    </Button>
+                  <Stack direction="row" spacing={0.5}>
+                    <Button size="small" variant="outlined" startIcon={<EditIcon />} onClick={() => openEdit(p)}>{t("edit")}</Button>
+                    <Button size="small" variant="outlined" color="info" startIcon={<PrintIcon />} onClick={() => handlePrint(p)}>{t("print")}</Button>
+                    <Button size="small" variant="outlined" color="error" startIcon={<DeleteIcon />} onClick={() => handleDelete(p.id)}>{t("delete")}</Button>
                   </Stack>
                 </TableCell>
               </TableRow>
             ))}
-            <TableRow sx={{ bgcolor: "grey.100", fontWeight: 600 }}>
-              <TableCell colSpan={4} sx={{ fontWeight: 600 }}>{t("total")}</TableCell>
-              <TableCell sx={{ fontWeight: 600 }}>{totalAmount.toLocaleString()}</TableCell>
-              <TableCell colSpan={6}></TableCell>
+            <TableRow sx={{ bgcolor: "grey.100" }}>
+              <TableCell colSpan={5} sx={{ fontWeight: 700 }}>{t("total")}</TableCell>
+              <TableCell sx={{ fontWeight: 700 }}>{total.toLocaleString()}</TableCell>
+              <TableCell colSpan={5} />
             </TableRow>
           </TableBody>
         </Table>
       </Box>
 
-      <Snackbar
-        open={snackbar.open}
-        autoHideDuration={3000}
-        onClose={() => setSnackbar({ ...snackbar, open: false })}
-        anchorOrigin={{ vertical: "bottom", horizontal: "center" }}
-      >
-        <Alert severity={snackbar.severity} onClose={() => setSnackbar({ ...snackbar, open: false })}>
-          {snackbar.message}
-        </Alert>
+      <Dialog open={dialogOpen} onClose={() => setDialogOpen(false)} fullWidth maxWidth="sm">
+        <DialogTitle>{editingId ? t("editPaymentVoucher") : t("newPaymentVoucher")}</DialogTitle>
+        <DialogContent>
+          <Stack spacing={2} sx={{ mt: 1 }}>
+            <Stack direction={{ xs: "column", sm: "row" }} spacing={2}>
+              <TextField label={t("date")} type="date" fullWidth required value={form.date}
+                onChange={e => setForm({ ...form, date: e.target.value })} InputLabelProps={{ shrink: true }} />
+              <TextField label={t("voucherNumber")} fullWidth value={form.voucherNumber}
+                onChange={e => setForm({ ...form, voucherNumber: e.target.value })} />
+            </Stack>
+            <Stack direction={{ xs: "column", sm: "row" }} spacing={2}>
+              <FormControl fullWidth required>
+                <InputLabel>{t("treasury")}</InputLabel>
+                <Select value={form.treasuryId} label={t("treasury")} onChange={e => setForm({ ...form, treasuryId: e.target.value })}>
+                  {treasuries.map(tr => <MenuItem key={tr.id} value={tr.id}>{tr.name}</MenuItem>)}
+                </Select>
+              </FormControl>
+              <FormControl fullWidth>
+                <InputLabel>{t("expenseCategory")}</InputLabel>
+                <Select value={form.expenseCategoryId} label={t("expenseCategory")} onChange={e => setForm({ ...form, expenseCategoryId: e.target.value })}>
+                  <MenuItem value="">{t("none")}</MenuItem>
+                  {categories.map(c => <MenuItem key={c.id} value={c.id}>{c.name}</MenuItem>)}
+                </Select>
+              </FormControl>
+            </Stack>
+            <Stack direction={{ xs: "column", sm: "row" }} spacing={2}>
+              <TextField label={t("amount")} type="number" fullWidth required value={form.amount}
+                onChange={e => setForm({ ...form, amount: parseFloat(e.target.value) })} />
+              <TextField label={t("paidTo")} fullWidth value={form.paidTo}
+                onChange={e => setForm({ ...form, paidTo: e.target.value })} />
+            </Stack>
+            <Stack direction={{ xs: "column", sm: "row" }} spacing={2}>
+              <TextField label={t("currency")} fullWidth value={form.currency}
+                onChange={e => setForm({ ...form, currency: e.target.value })} />
+              <TextField label={t("exchangeRate")} type="number" fullWidth value={form.exchangeRate}
+                onChange={e => setForm({ ...form, exchangeRate: parseFloat(e.target.value) })} />
+            </Stack>
+            <TextField label={t("description")} fullWidth value={form.description}
+              onChange={e => setForm({ ...form, description: e.target.value })} />
+            <TextField label={t("notes")} fullWidth multiline rows={2} value={form.notes}
+              onChange={e => setForm({ ...form, notes: e.target.value })} />
+          </Stack>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={() => setDialogOpen(false)}>{t("cancel")}</Button>
+          <Button variant="contained" startIcon={<SaveIcon />} onClick={handleSave}>{editingId ? t("update") : t("save")}</Button>
+        </DialogActions>
+      </Dialog>
+
+      <Snackbar open={snackbar.open} autoHideDuration={3000} onClose={() => setSnackbar({ ...snackbar, open: false })} anchorOrigin={{ vertical: "bottom", horizontal: "center" }}>
+        <Alert severity={snackbar.severity} onClose={() => setSnackbar({ ...snackbar, open: false })}>{snackbar.message}</Alert>
       </Snackbar>
     </Paper>
   );
