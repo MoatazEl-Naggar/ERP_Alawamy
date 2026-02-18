@@ -3,7 +3,7 @@ import { PrismaPg } from "@prisma/adapter-pg";
 import { Pool } from "pg";
 
 const pool = new Pool({
-  connectionString: process.env.DATABASE_URL || "postgresql://postgres:123456@localhost:5432/erp_db",
+  connectionString:"postgresql://postgres:123456@localhost:5432/erp_db",
 });
 
 pool.on('error', (err: any) => {

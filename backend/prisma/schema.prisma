@@ -84,28 +84,34 @@ model Treasury {
 }
 
 model ReceiptVoucher {
-  id          String   @id @default(uuid())
-  voucherNo   String
-  date        DateTime
-  treasuryId  String
-  amount      Float
-  description String?
-  notes       String?
-  createdAt   DateTime @default(now())
+  id            String    @id @default(uuid())
+  voucherNumber String    // ✅ Changed from voucherNo
+  date          DateTime
+  treasuryId    String
+  amount        Float
+  description   String?   // Who it's from / Purpose
+  receivedFrom  String?   // ✅ NEW: Name of person/entity money received from
+  notes         String?
+  currency      String    @default("جنيه") // ✅ NEW: Currency type
+  exchangeRate  Float     @default(1) // ✅ NEW: Exchange rate
+  createdAt     DateTime  @default(now())
 
   treasury Treasury @relation(fields: [treasuryId], references: [id], onDelete: Restrict)
 }
 
 model PaymentVoucher {
-  id                String   @id @default(uuid())
-  voucherNo         String
+  id                String    @id @default(uuid())
+  voucherNumber     String    // ✅ Changed from voucherNo
   date              DateTime
   treasuryId        String
   expenseCategoryId String?
   amount            Float
-  description       String?
+  description       String?   // What it's for / Purpose
+  paidTo            String?   // ✅ NEW: Name of person/entity money paid to
   notes             String?
-  createdAt         DateTime @default(now())
+  currency          String    @default("جنيه") // ✅ NEW: Currency type
+  exchangeRate      Float     @default(1) // ✅ NEW: Exchange rate
+  createdAt         DateTime  @default(now())
 
   treasury        Treasury         @relation(fields: [treasuryId], references: [id], onDelete: Restrict)
   expenseCategory ExpenseCategory? @relation(fields: [expenseCategoryId], references: [id], onDelete: SetNull)
@@ -132,21 +138,17 @@ model PurchaseItem {
   invoiceId  String
   itemName   String
   barcode    String?
-  qtyCartons Int
-  qtyUnits   Int
-  price      Float
-  discount   Float?
-  total      Float
-  cbm        Float?
-  weight     Float?
+  quantity   Int
+  unitPrice  Float
+  createdAt  DateTime @default(now())
 
-  invoice        PurchaseInvoice @relation(fields: [invoiceId], references: [id], onDelete: Cascade)
+  invoice   PurchaseInvoice @relation(fields: [invoiceId], references: [id], onDelete: Cascade)
   receivingItems ReceivingItem[]
 }
 
 model ReceivingInvoice {
   id            String   @id @default(uuid())
-  invoiceNumber String
+  invoiceNumber String   @unique
   date          DateTime
   purchaseId    String
   notes         String?
@@ -157,60 +159,51 @@ model ReceivingInvoice {
 }
 
 model ReceivingItem {
-  id              String  @id @default(uuid())
-  receivingId     String
-  purchaseItemId  String
-  receivedCartons Int
-  receivedUnits   Int
-  damagedUnits    Int?
-  notes           String?
+  id               String  @id @default(uuid())
+  receivingId      String
+  purchaseItemId   String
+  receivedUnits    Int
+  createdAt        DateTime @default(now())
 
-  receiving     ReceivingInvoice @relation(fields: [receivingId], references: [id], onDelete: Cascade)
-  purchaseItem  PurchaseItem     @relation(fields: [purchaseItemId], references: [id], onDelete: Restrict)
-  shipmentItems ShipmentItem[] // ✅ ADD THIS BACK-RELATION
+  receivingInvoice ReceivingInvoice @relation(fields: [receivingId], references: [id], onDelete: Cascade)
+  purchaseItem     PurchaseItem     @relation(fields: [purchaseItemId], references: [id], onDelete: Restrict)
 }
 
-model Shipment {
-  id              String   @id @default(uuid())
-  containerNo     String
-  containerId     String?
-  date            DateTime
-  customerId      String
-  shippingCompany String?
-  notes           String?
-  createdAt       DateTime @default(now())
-
-  customer  Customer       @relation(fields: [customerId], references: [id], onDelete: Restrict)
-  container Container?     @relation(fields: [containerId], references: [id], onDelete: SetNull)
-  items     ShipmentItem[]
-}
-
-model Container {
+model ItemRegistration {
   id          String   @id @default(uuid())
-  containerNo String   @unique
-  date        DateTime
-  notes       String?
+  itemName    String   @unique
+  barcode     String   @unique
+  description String?
   createdAt   DateTime @default(now())
-
-  shipments Shipment[]
-}
-model ShipmentItem {
-  id              String @id @default(uuid())
-  shipmentId      String
-  receivingItemId String
-  shippedCartons  Int
-  shippedUnits    Int
-
-  shipment      Shipment      @relation(fields: [shipmentId], references: [id], onDelete: Cascade)
-  receivingItem ReceivingItem @relation(fields: [receivingItemId], references: [id], onDelete: Restrict)
 }
 
 model InventoryItem {
   id            String   @id @default(uuid())
-  itemName      String
-  barcode       String?
+  itemName      String   @unique
+  barcode       String   @unique
   totalReceived Int      @default(0)
-  totalShipped  Int      @default(0)
   balance       Int      @default(0)
-  updatedAt     DateTime @updatedAt
+  createdAt     DateTime @default(now())
+}
+
+model Container {
+  id              String   @id @default(uuid())
+  containerNumber String   @unique
+  containerType   String
+  createdAt       DateTime @default(now())
+
+  shipments Shipment[]
+}
+
+model Shipment {
+  id            String   @id @default(uuid())
+  referenceNo   String   @unique
+  date          DateTime
+  customerId    String
+  containerId   String
+  notes         String?
+  createdAt     DateTime @default(now())
+
+  customer  Customer  @relation(fields: [customerId], references: [id], onDelete: Restrict)
+  container Container @relation(fields: [containerId], references: [id], onDelete: Restrict)
 }
