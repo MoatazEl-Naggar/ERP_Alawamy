@@ -3,26 +3,30 @@ import { prisma } from "../../config/prisma";
 export const createShipment = async (data: any) => {
   const shipment = await prisma.shipment.create({
     data: {
-      containerNo: data.containerNo,
+      referenceNo: data.referenceNo,
       date: new Date(data.date),
       customerId: data.customerId,
-      shippingCompany: data.shippingCompany,
-      notes: data.notes,
+      containerId: data.containerId,
+      shippingCompany: data.shippingCompany || null,
+      notes: data.notes || null,
       items: {
-        create: data.items
-      }
+        create: data.items.map((item: any) => ({
+          receivingItemId: item.receivingItemId,
+          shippedUnits: item.shippedUnits,
+        })),
+      },
     },
     include: {
       items: {
         include: {
           receivingItem: {
             include: {
-              purchaseItem: true
-            }
-          }
-        }
-      }
-    }
+              purchaseItem: true,
+            },
+          },
+        },
+      },
+    },
   });
 
   // 🔥 Reduce Inventory
@@ -33,8 +37,8 @@ export const createShipment = async (data: any) => {
       where: { itemName: name },
       data: {
         totalShipped: { increment: item.shippedUnits },
-        balance: { decrement: item.shippedUnits }
-      }
+        balance: { decrement: item.shippedUnits },
+      },
     });
   }
 
@@ -45,11 +49,12 @@ export const getShipments = () =>
   prisma.shipment.findMany({
     include: {
       customer: true,
+      container: true,
       items: {
         include: {
-          receivingItem: { include: { purchaseItem: true } }
-        }
-      }
+          receivingItem: { include: { purchaseItem: true } },
+        },
+      },
     },
-    orderBy: { createdAt: "desc" }
+    orderBy: { createdAt: "desc" },
   });

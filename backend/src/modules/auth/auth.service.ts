@@ -2,7 +2,7 @@ import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 import { prisma } from "../../config/prisma";
 
-const JWT_SECRET = "supersecretkey"; // later move to env
+const JWT_SECRET = process.env.JWT_SECRET || "supersecretkey_change_in_production";
 
 export const loginUser = async (username: string, password: string) => {
   const user = await prisma.user.findUnique({ where: { username } });

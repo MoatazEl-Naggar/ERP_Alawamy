@@ -84,34 +84,34 @@ model Treasury {
 }
 
 model ReceiptVoucher {
-  id            String    @id @default(uuid())
-  voucherNumber String    // ✅ Changed from voucherNo
+  id            String   @id @default(uuid())
+  voucherNumber String
   date          DateTime
   treasuryId    String
   amount        Float
   description   String?
-  receivedFrom  String?   // ✅ NEW
+  receivedFrom  String?
   notes         String?
-  currency      String    @default("جنيه") // ✅ NEW
-  exchangeRate  Float     @default(1) // ✅ NEW
-  createdAt     DateTime  @default(now())
+  currency      String   @default("جنيه")
+  exchangeRate  Float    @default(1)
+  createdAt     DateTime @default(now())
 
   treasury Treasury @relation(fields: [treasuryId], references: [id], onDelete: Restrict)
 }
 
 model PaymentVoucher {
-  id                String    @id @default(uuid())
-  voucherNumber     String    // ✅ Changed from voucherNo
+  id                String   @id @default(uuid())
+  voucherNumber     String
   date              DateTime
   treasuryId        String
   expenseCategoryId String?
   amount            Float
   description       String?
-  paidTo            String?   // ✅ NEW
+  paidTo            String?
   notes             String?
-  currency          String    @default("جنيه") // ✅ NEW
-  exchangeRate      Float     @default(1) // ✅ NEW
-  createdAt         DateTime  @default(now())
+  currency          String   @default("جنيه")
+  exchangeRate      Float    @default(1)
+  createdAt         DateTime @default(now())
 
   treasury        Treasury         @relation(fields: [treasuryId], references: [id], onDelete: Restrict)
   expenseCategory ExpenseCategory? @relation(fields: [expenseCategoryId], references: [id], onDelete: SetNull)
@@ -134,15 +134,15 @@ model PurchaseInvoice {
 }
 
 model PurchaseItem {
-  id         String  @id @default(uuid())
-  invoiceId  String
-  itemName   String
-  barcode    String?
-  quantity   Int
-  unitPrice  Float
-  createdAt  DateTime @default(now())
+  id        String   @id @default(uuid())
+  invoiceId String
+  itemName  String
+  barcode   String?
+  quantity  Int
+  unitPrice Float
+  createdAt DateTime @default(now())
 
-  invoice   PurchaseInvoice @relation(fields: [invoiceId], references: [id], onDelete: Cascade)
+  invoice        PurchaseInvoice @relation(fields: [invoiceId], references: [id], onDelete: Cascade)
   receivingItems ReceivingItem[]
 }
 
@@ -159,14 +159,16 @@ model ReceivingInvoice {
 }
 
 model ReceivingItem {
-  id               String  @id @default(uuid())
-  receivingId      String
-  purchaseItemId   String
-  receivedUnits    Int
-  createdAt        DateTime @default(now())
+  id             String   @id @default(uuid())
+  receivingId    String
+  purchaseItemId String
+  receivedUnits  Int
+  createdAt      DateTime @default(now())
 
   receivingInvoice ReceivingInvoice @relation(fields: [receivingId], references: [id], onDelete: Cascade)
   purchaseItem     PurchaseItem     @relation(fields: [purchaseItemId], references: [id], onDelete: Restrict)
+
+  shipmentItems ShipmentItem[]
 }
 
 model ItemRegistration {
@@ -182,6 +184,7 @@ model InventoryItem {
   itemName      String   @unique
   barcode       String   @unique
   totalReceived Int      @default(0)
+  totalShipped  Int      @default(0)
   balance       Int      @default(0)
   createdAt     DateTime @default(now())
 }
@@ -190,20 +193,35 @@ model Container {
   id              String   @id @default(uuid())
   containerNumber String   @unique
   containerType   String
+  date            DateTime?
+  notes           String?
   createdAt       DateTime @default(now())
 
   shipments Shipment[]
 }
 
 model Shipment {
-  id            String   @id @default(uuid())
-  referenceNo   String   @unique
-  date          DateTime
-  customerId    String
-  containerId   String
-  notes         String?
-  createdAt     DateTime @default(now())
+  id              String   @id @default(uuid())
+  referenceNo     String   @unique
+  date            DateTime
+  customerId      String
+  containerId     String
+  shippingCompany String?
+  notes           String?
+  createdAt       DateTime @default(now())
 
-  customer  Customer  @relation(fields: [customerId], references: [id], onDelete: Restrict)
-  container Container @relation(fields: [containerId], references: [id], onDelete: Restrict)
+  customer  Customer       @relation(fields: [customerId], references: [id], onDelete: Restrict)
+  container Container      @relation(fields: [containerId], references: [id], onDelete: Restrict)
+  items     ShipmentItem[]
+}
+
+model ShipmentItem {
+  id              String   @id @default(uuid())
+  shipmentId      String
+  receivingItemId String
+  shippedUnits    Int
+  createdAt       DateTime @default(now())
+
+  shipment      Shipment      @relation(fields: [shipmentId], references: [id], onDelete: Cascade)
+  receivingItem ReceivingItem @relation(fields: [receivingItemId], references: [id], onDelete: Restrict)
 }
