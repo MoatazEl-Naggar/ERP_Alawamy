@@ -58,12 +58,12 @@ export default function Currencies() {
 
       <Box sx={{ overflowX: "auto" }}>
         <Table size="small">
-          <TableHead sx={{ bgcolor: "primary.main" }}>
+          <TableHead>
             <TableRow>
-              <TableCell sx={{ color: "white", fontWeight: 600 }}>#</TableCell>
-              <TableCell sx={{ color: "white", fontWeight: 600 }}>{t("currencyName")}</TableCell>
-              <TableCell sx={{ color: "white", fontWeight: 600 }}>{t("exchangeRate")}</TableCell>
-              <TableCell sx={{ color: "white", fontWeight: 600 }}>{t("actions")}</TableCell>
+              <TableCell sx={{  fontWeight: 600 }}>#</TableCell>
+              <TableCell sx={{  fontWeight: 600 }}>{t("currencyName")}</TableCell>
+              <TableCell sx={{  fontWeight: 600 }}>{t("exchangeRate")}</TableCell>
+              <TableCell sx={{  fontWeight: 600 }}>{t("actions")}</TableCell>
             </TableRow>
           </TableHead>
           <TableBody>

@@ -3,7 +3,11 @@
   "edit": "编辑",
   "delete": "删除",
   "save": "保存",
+  "update": "更新",
   "cancel": "取消",
+  "print": "打印",
+  "confirmDelete": "确定要删除此项目吗？",
+  "total": "合计",
   "name": "名称",
   "number": "编号",
   "phone": "电话",
@@ -14,6 +18,7 @@
   "notes": "备注",
   "balance": "余额",
   "amount": "金额",
+  "description": "描述",
   "dashboardTitle": "仪表盘",
   "inventoryItems": "库存项目",
   "netCash": "净现金",
@@ -27,5 +32,6 @@
   "voucherItems": "凭证项目",
   "currencies": "货币汇率",
   "paymentVoucher": "付款凭证",
-  "receiptVoucher": "收款凭证"
+  "receiptVoucher": "收款凭证",
+  "searchPlaceholder": "搜索..."
 }

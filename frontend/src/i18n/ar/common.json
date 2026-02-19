@@ -3,7 +3,11 @@
   "edit": "تعديل",
   "delete": "حذف",
   "save": "حفظ",
+  "update": "تحديث",
   "cancel": "إلغاء",
+  "print": "طباعة",
+  "confirmDelete": "هل أنت متأكد من حذف هذا العنصر؟",
+  "total": "الإجمالي",
   "name": "الاسم",
   "number": "الرقم",
   "phone": "الهاتف",
@@ -14,6 +18,7 @@
   "notes": "ملاحظات",
   "balance": "الرصيد",
   "amount": "المبلغ",
+  "description": "الوصف",
   "item": "الصنف",
   "dashboardTitle": "لوحة التحكم",
   "inventoryItems": "عناصر المخزون",
@@ -27,5 +32,6 @@
   "voucherItems": "بنود السندات",
   "currencies": "العملات (سعر الصرف)",
   "paymentVoucher": "سند صرف",
-  "receiptVoucher": "سند قبض"
+  "receiptVoucher": "سند قبض",
+  "searchPlaceholder": "بحث..."
 }

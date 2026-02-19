@@ -47,7 +47,9 @@ model Customer {
   accountNumber  String?
   createdAt      DateTime @default(now())
 
-  shipments Shipment[]
+  shipments        Shipment[]
+  receiptVouchers  ReceiptVoucher[]
+  paymentVouchers  PaymentVoucher[]
 }
 
 model Supplier {
@@ -61,6 +63,8 @@ model Supplier {
   createdAt      DateTime @default(now())
 
   purchaseInvoices PurchaseInvoice[]
+  receiptVouchers  ReceiptVoucher[]
+  paymentVouchers  PaymentVoucher[]
 }
 
 model ExpenseCategory {
@@ -71,6 +75,7 @@ model ExpenseCategory {
   createdAt DateTime @default(now())
 
   paymentVouchers PaymentVoucher[]
+  receiptVouchers ReceiptVoucher[]
 }
 
 model Treasury {
@@ -84,19 +89,28 @@ model Treasury {
 }
 
 model ReceiptVoucher {
-  id            String   @id @default(uuid())
-  voucherNumber String
-  date          DateTime
-  treasuryId    String
-  amount        Float
-  description   String?
-  receivedFrom  String?
-  notes         String?
-  currency      String   @default("جنيه")
-  exchangeRate  Float    @default(1)
-  createdAt     DateTime @default(now())
+  id                String   @id @default(uuid())
+  voucherNumber     String
+  date              DateTime
+  treasuryId        String
+  expenseCategoryId String?
+  amount            Float
+  costPrice         Float?
+  description       String?
+  receivedFrom      String?
+  notes             String?
+  currency          String   @default("جنيه")
+  exchangeRate      Float    @default(1)
+  shipmentId        String?
+  customerId        String?
+  supplierId        String?
+  createdAt         DateTime @default(now())
 
-  treasury Treasury @relation(fields: [treasuryId], references: [id], onDelete: Restrict)
+  treasury        Treasury         @relation(fields: [treasuryId], references: [id], onDelete: Restrict)
+  expenseCategory ExpenseCategory? @relation(fields: [expenseCategoryId], references: [id], onDelete: SetNull)
+  shipment        Shipment?        @relation(fields: [shipmentId], references: [id], onDelete: SetNull)
+  customer        Customer?        @relation(fields: [customerId], references: [id], onDelete: SetNull)
+  supplier        Supplier?        @relation(fields: [supplierId], references: [id], onDelete: SetNull)
 }
 
 model PaymentVoucher {
@@ -106,15 +120,30 @@ model PaymentVoucher {
   treasuryId        String
   expenseCategoryId String?
   amount            Float
+  costPrice         Float?
   description       String?
   paidTo            String?
   notes             String?
   currency          String   @default("جنيه")
   exchangeRate      Float    @default(1)
+  shipmentId        String?
+  customerId        String?
+  supplierId        String?
   createdAt         DateTime @default(now())
 
   treasury        Treasury         @relation(fields: [treasuryId], references: [id], onDelete: Restrict)
   expenseCategory ExpenseCategory? @relation(fields: [expenseCategoryId], references: [id], onDelete: SetNull)
+  shipment        Shipment?        @relation(fields: [shipmentId], references: [id], onDelete: SetNull)
+  customer        Customer?        @relation(fields: [customerId], references: [id], onDelete: SetNull)
+  supplier        Supplier?        @relation(fields: [supplierId], references: [id], onDelete: SetNull)
+}
+
+model Currency {
+  id           String   @id @default(uuid())
+  name         String   @unique
+  exchangeRate Float    @default(1)
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
 }
 
 model PurchaseInvoice {
@@ -161,7 +190,7 @@ model ReceivingInvoice {
   notes         String?
   createdAt     DateTime @default(now())
 
-  purchase PurchaseInvoice  @relation(fields: [purchaseId], references: [id], onDelete: Restrict)
+  purchase PurchaseInvoice @relation(fields: [purchaseId], references: [id], onDelete: Restrict)
   items    ReceivingItem[]
 }
 
@@ -210,19 +239,21 @@ model Container {
 }
 
 model Shipment {
-  id              String    @id @default(uuid())
-  referenceNo     String    @unique
+  id              String   @id @default(uuid())
+  referenceNo     String   @unique
   containerNo     String?
   containerId     String?
   date            DateTime
   customerId      String
   shippingCompany String?
   notes           String?
-  createdAt       DateTime  @default(now())
+  createdAt       DateTime @default(now())
 
-  customer  Customer       @relation(fields: [customerId], references: [id], onDelete: Restrict)
-  container Container?     @relation(fields: [containerId], references: [id], onDelete: Restrict)
-  items     ShipmentItem[]
+  customer        Customer         @relation(fields: [customerId], references: [id], onDelete: Restrict)
+  container       Container?       @relation(fields: [containerId], references: [id], onDelete: Restrict)
+  items           ShipmentItem[]
+  receiptVouchers ReceiptVoucher[]
+  paymentVouchers PaymentVoucher[]
 }
 
 model ShipmentItem {

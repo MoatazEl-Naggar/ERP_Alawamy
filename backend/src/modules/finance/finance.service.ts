@@ -7,201 +7,203 @@ export const createTreasury = (name: string) =>
 export const getTreasuries = () =>
   prisma.treasury.findMany({ orderBy: { createdAt: "desc" } });
 
-// ================= RECEIPT VOUCHERS =================
-// Receipt (Money IN)
-export const createReceipt = async (data: any) => {
-  // ✅ Map voucherNumber to voucherNumber (was voucherNo)
-  const receiptData = {
-    voucherNumber: data.voucherNumber || "",
-    date: new Date(data.date),
-    treasuryId: data.treasuryId,
-    amount: Number(data.amount),
-    description: data.description || null,
-    receivedFrom: data.receivedFrom || null, // ✅ NEW
-    notes: data.notes || null,
-    currency: data.currency || "جنيه", // ✅ NEW
-    exchangeRate: Number(data.exchangeRate) || 1 // ✅ NEW
-  };
-
-  // Update treasury balance
-  await prisma.treasury.update({
-    where: { id: data.treasuryId },
-    data: { balance: { increment: data.amount } }
-  });
-
-  return prisma.receiptVoucher.create({ data: receiptData });
+// ================= SHARED INCLUDE =================
+const receiptInclude = {
+  treasury: true,
+  expenseCategory: true,
+  shipment: { select: { id: true, referenceNo: true } },
+  customer: { select: { id: true, name: true } },
+  supplier: { select: { id: true, name: true } },
 };
 
-// Get all receipts
-export const getReceipts = () =>
-  prisma.receiptVoucher.findMany({
-    include: { treasury: true },
-    orderBy: { createdAt: "desc" }
+const paymentInclude = {
+  treasury: true,
+  expenseCategory: true,
+  shipment: { select: { id: true, referenceNo: true } },
+  customer: { select: { id: true, name: true } },
+  supplier: { select: { id: true, name: true } },
+};
+
+// ================= RECEIPT VOUCHERS =================
+export const createReceipt = async (data: any) => {
+  await prisma.treasury.update({
+    where: { id: data.treasuryId },
+    data: { balance: { increment: Number(data.amount) } },
   });
 
-// Get single receipt
-export const getReceiptById = (id: string) =>
-  prisma.receiptVoucher.findUnique({
-    where: { id },
-    include: { treasury: true }
+  return prisma.receiptVoucher.create({
+    data: {
+      voucherNumber:     data.voucherNumber || "",
+      date:              new Date(data.date),
+      treasuryId:        data.treasuryId,
+      expenseCategoryId: data.expenseCategoryId || null,
+      amount:            Number(data.amount),
+      costPrice:         data.costPrice != null ? Number(data.costPrice) : null,
+      description:       data.description || null,
+      receivedFrom:      data.receivedFrom || null,
+      notes:             data.notes || null,
+      currency:          data.currency || "جنيه",
+      exchangeRate:      Number(data.exchangeRate) || 1,
+      shipmentId:        data.shipmentId || null,
+      customerId:        data.customerId || null,
+      supplierId:        data.supplierId || null,
+    },
+    include: receiptInclude,
   });
+};
 
-// Update receipt
-export const updateReceipt = async (id: string, data: any) => {
-  const oldReceipt = await prisma.receiptVoucher.findUnique({
-    where: { id }
-  });
-
-  if (!oldReceipt) throw new Error("Receipt not found");
-
-  // Adjust treasury balance for amount difference
-  const amountDifference = Number(data.amount) - oldReceipt.amount;
-  if (amountDifference !== 0) {
-    await prisma.treasury.update({
-      where: { id: oldReceipt.treasuryId },
-      data: { balance: { increment: amountDifference } }
-    });
+export const getReceipts = (from?: string, to?: string) => {
+  const where: any = {};
+  if (from || to) {
+    where.date = {};
+    if (from) where.date.gte = new Date(from);
+    if (to) {
+      const toDate = new Date(to);
+      toDate.setHours(23, 59, 59, 999);
+      where.date.lte = toDate;
+    }
   }
+  return prisma.receiptVoucher.findMany({
+    where,
+    include: receiptInclude,
+    orderBy: { createdAt: "desc" },
+  });
+};
 
-  const receiptData = {
-    voucherNumber: data.voucherNumber || oldReceipt.voucherNumber,
-    date: new Date(data.date),
-    treasuryId: data.treasuryId || oldReceipt.treasuryId,
-    amount: Number(data.amount),
-    description: data.description || null,
-    receivedFrom: data.receivedFrom || null,
-    notes: data.notes || null,
-    currency: data.currency || "جنيه",
-    exchangeRate: Number(data.exchangeRate) || 1
-  };
+export const getReceiptById = (id: string) =>
+  prisma.receiptVoucher.findUnique({ where: { id }, include: receiptInclude });
+
+export const updateReceipt = async (id: string, data: any) => {
+  const old = await prisma.receiptVoucher.findUnique({ where: { id } });
+  if (!old) throw new Error("Receipt not found");
+
+  const diff = Number(data.amount) - old.amount;
+  if (diff !== 0)
+    await prisma.treasury.update({
+      where: { id: old.treasuryId },
+      data: { balance: { increment: diff } },
+    });
 
   return prisma.receiptVoucher.update({
     where: { id },
-    data: receiptData,
-    include: { treasury: true }
+    data: {
+      voucherNumber:     data.voucherNumber ?? old.voucherNumber,
+      date:              new Date(data.date),
+      treasuryId:        data.treasuryId ?? old.treasuryId,
+      expenseCategoryId: data.expenseCategoryId || null,
+      amount:            Number(data.amount),
+      costPrice:         data.costPrice != null ? Number(data.costPrice) : null,
+      description:       data.description || null,
+      receivedFrom:      data.receivedFrom || null,
+      notes:             data.notes || null,
+      currency:          data.currency || "جنيه",
+      exchangeRate:      Number(data.exchangeRate) || 1,
+      shipmentId:        data.shipmentId || null,
+      customerId:        data.customerId || null,
+      supplierId:        data.supplierId || null,
+    },
+    include: receiptInclude,
   });
 };
 
-// Delete receipt
 export const deleteReceipt = async (id: string) => {
-  const receipt = await prisma.receiptVoucher.findUnique({
-    where: { id }
-  });
-
-  if (!receipt) throw new Error("Receipt not found");
-
-  // Reverse treasury balance
+  const r = await prisma.receiptVoucher.findUnique({ where: { id } });
+  if (!r) throw new Error("Receipt not found");
   await prisma.treasury.update({
-    where: { id: receipt.treasuryId },
-    data: { balance: { decrement: receipt.amount } }
+    where: { id: r.treasuryId },
+    data: { balance: { decrement: r.amount } },
   });
-
-  return prisma.receiptVoucher.delete({
-    where: { id }
-  });
+  return prisma.receiptVoucher.delete({ where: { id } });
 };
 
 // ================= PAYMENT VOUCHERS =================
-// Payment (Money OUT)
 export const createPayment = async (data: any) => {
-  // ✅ Map voucherNumber to voucherNumber (was voucherNo)
-  const paymentData = {
-    voucherNumber: data.voucherNumber || "",
-    date: new Date(data.date),
-    treasuryId: data.treasuryId,
-    expenseCategoryId: data.expenseCategoryId || null,
-    amount: Number(data.amount),
-    description: data.description || null,
-    paidTo: data.paidTo || null, // ✅ NEW
-    notes: data.notes || null,
-    currency: data.currency || "جنيه", // ✅ NEW
-    exchangeRate: Number(data.exchangeRate) || 1 // ✅ NEW
-  };
-
-  // Update treasury balance
   await prisma.treasury.update({
     where: { id: data.treasuryId },
-    data: { balance: { decrement: data.amount } }
+    data: { balance: { decrement: Number(data.amount) } },
   });
 
-  return prisma.paymentVoucher.create({ data: paymentData });
+  return prisma.paymentVoucher.create({
+    data: {
+      voucherNumber:     data.voucherNumber || "",
+      date:              new Date(data.date),
+      treasuryId:        data.treasuryId,
+      expenseCategoryId: data.expenseCategoryId || null,
+      amount:            Number(data.amount),
+      costPrice:         data.costPrice != null ? Number(data.costPrice) : null,
+      description:       data.description || null,
+      paidTo:            data.paidTo || null,
+      notes:             data.notes || null,
+      currency:          data.currency || "جنيه",
+      exchangeRate:      Number(data.exchangeRate) || 1,
+      shipmentId:        data.shipmentId || null,
+      customerId:        data.customerId || null,
+      supplierId:        data.supplierId || null,
+    },
+    include: paymentInclude,
+  });
 };
 
-// Get all payments
-export const getPayments = () =>
-  prisma.paymentVoucher.findMany({
-    include: {
-      treasury: true,
-      expenseCategory: true
-    },
-    orderBy: { createdAt: "desc" }
-  });
-
-// Get single payment
-export const getPaymentById = (id: string) =>
-  prisma.paymentVoucher.findUnique({
-    where: { id },
-    include: {
-      treasury: true,
-      expenseCategory: true
+export const getPayments = (from?: string, to?: string) => {
+  const where: any = {};
+  if (from || to) {
+    where.date = {};
+    if (from) where.date.gte = new Date(from);
+    if (to) {
+      const toDate = new Date(to);
+      toDate.setHours(23, 59, 59, 999);
+      where.date.lte = toDate;
     }
-  });
-
-// Update payment
-export const updatePayment = async (id: string, data: any) => {
-  const oldPayment = await prisma.paymentVoucher.findUnique({
-    where: { id }
-  });
-
-  if (!oldPayment) throw new Error("Payment not found");
-
-  // Adjust treasury balance for amount difference
-  const amountDifference = Number(data.amount) - oldPayment.amount;
-  if (amountDifference !== 0) {
-    await prisma.treasury.update({
-      where: { id: oldPayment.treasuryId },
-      data: { balance: { decrement: amountDifference } }
-    });
   }
+  return prisma.paymentVoucher.findMany({
+    where,
+    include: paymentInclude,
+    orderBy: { createdAt: "desc" },
+  });
+};
 
-  const paymentData = {
-    voucherNumber: data.voucherNumber || oldPayment.voucherNumber,
-    date: new Date(data.date),
-    treasuryId: data.treasuryId || oldPayment.treasuryId,
-    expenseCategoryId: data.expenseCategoryId || null,
-    amount: Number(data.amount),
-    description: data.description || null,
-    paidTo: data.paidTo || null,
-    notes: data.notes || null,
-    currency: data.currency || "جنيه",
-    exchangeRate: Number(data.exchangeRate) || 1
-  };
+export const getPaymentById = (id: string) =>
+  prisma.paymentVoucher.findUnique({ where: { id }, include: paymentInclude });
+
+export const updatePayment = async (id: string, data: any) => {
+  const old = await prisma.paymentVoucher.findUnique({ where: { id } });
+  if (!old) throw new Error("Payment not found");
+
+  const diff = Number(data.amount) - old.amount;
+  if (diff !== 0)
+    await prisma.treasury.update({
+      where: { id: old.treasuryId },
+      data: { balance: { decrement: diff } },
+    });
 
   return prisma.paymentVoucher.update({
     where: { id },
-    data: paymentData,
-    include: {
-      treasury: true,
-      expenseCategory: true
-    }
+    data: {
+      voucherNumber:     data.voucherNumber ?? old.voucherNumber,
+      date:              new Date(data.date),
+      treasuryId:        data.treasuryId ?? old.treasuryId,
+      expenseCategoryId: data.expenseCategoryId || null,
+      amount:            Number(data.amount),
+      costPrice:         data.costPrice != null ? Number(data.costPrice) : null,
+      description:       data.description || null,
+      paidTo:            data.paidTo || null,
+      notes:             data.notes || null,
+      currency:          data.currency || "جنيه",
+      exchangeRate:      Number(data.exchangeRate) || 1,
+      shipmentId:        data.shipmentId || null,
+      customerId:        data.customerId || null,
+      supplierId:        data.supplierId || null,
+    },
+    include: paymentInclude,
   });
 };
 
-// Delete payment
 export const deletePayment = async (id: string) => {
-  const payment = await prisma.paymentVoucher.findUnique({
-    where: { id }
-  });
-
-  if (!payment) throw new Error("Payment not found");
-
-  // Reverse treasury balance
+  const p = await prisma.paymentVoucher.findUnique({ where: { id } });
+  if (!p) throw new Error("Payment not found");
   await prisma.treasury.update({
-    where: { id: payment.treasuryId },
-    data: { balance: { increment: payment.amount } }
+    where: { id: p.treasuryId },
+    data: { balance: { increment: p.amount } },
   });
-
-  return prisma.paymentVoucher.delete({
-    where: { id }
-  });
+  return prisma.paymentVoucher.delete({ where: { id } });
 };
