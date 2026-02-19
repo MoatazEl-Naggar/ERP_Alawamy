@@ -13,7 +13,7 @@ import { useTranslation } from "react-i18next";
 import { useState } from "react";
 import { useTheme } from "@mui/material/styles";
 
-const drawerWidth = 268;
+const drawerWidth = 240;
 
 export default function Layout() {
   const navigate = useNavigate();
@@ -53,7 +53,6 @@ export default function Layout() {
           {t("appName")}
         </Typography>
       </Box>
-      
 
       <List sx={{ flexGrow: 1, px: 1, py: 1 }}>
 
@@ -62,8 +61,9 @@ export default function Layout() {
           <DashboardIcon fontSize="small" sx={{ marginInlineEnd: 1 }} />
           <ListItemText primary={t("dashboard")} />
         </ListItemButton>
-<Divider />
-{/* ===== MASTER DATA ===== */}
+        <Divider />
+
+        {/* ===== MASTER DATA ===== */}
         <ListItemButton onClick={() => toggleMenu("masterdata")}>
           <Business fontSize="small" sx={{ marginInlineEnd: 1 }} />
           <ListItemText primary={t("masterData")} />
@@ -95,7 +95,6 @@ export default function Layout() {
           </List>
         </Collapse>
 
-        
         {/* ===== TRANSACTIONS ===== */}
         <ListItemButton onClick={() => toggleMenu("transactions")}>
           <LocalShipping fontSize="small" sx={{ marginInlineEnd: 1 }} />
@@ -136,17 +135,15 @@ export default function Layout() {
             <ListItemButton selected={isSelected("/receipt-vouchers")} onClick={() => navigateTo("/receipt-vouchers")}>
               <ListItemText primary={t("receiptVoucher")} />
             </ListItemButton>
-            {/* {user?.role === "ADMIN" && (
+            {user?.role === "ADMIN" && (
               <ListItemButton selected={isSelected("/voucher-review")} onClick={() => navigateTo("/voucher-review")}>
                 <ListItemText primary={t("voucherReview")} />
               </ListItemButton>
-            )} */}
+            )}
           </List>
         </Collapse>
 
         <Divider sx={{ my: 1 }} />
-
-        
 
         {/* Reports */}
         <ListItemButton selected={isSelected("/reports")} onClick={() => navigateTo("/reports")}>
@@ -159,7 +156,8 @@ export default function Layout() {
   );
 
   return (
-    <Box sx={{ display: "flex", minHeight: "100vh" }}>
+    // ✅ width:100% ensures the flex container itself spans the full viewport
+    <Box sx={{ display: "flex", minHeight: "100vh", width: "100%" }}>
       <AppBar position="fixed" sx={{ zIndex: 1300, background: "linear-gradient(100deg, #1f4ea3 5%, #406bc0 50%, #00a389 110%)" }}>
         <Toolbar>
           {isMobile && (
@@ -194,16 +192,50 @@ export default function Layout() {
       </AppBar>
 
       {isMobile ? (
-        <Drawer variant="temporary" open={mobileOpen} onClose={toggleDrawer} anchor={isRTL ? "right" : "left"} ModalProps={{ keepMounted: true }}>
+        <Drawer
+          variant="temporary"
+          open={mobileOpen}
+          onClose={toggleDrawer}
+          anchor={isRTL ? "right" : "left"}
+          ModalProps={{ keepMounted: true }}
+        >
           {drawerContent}
         </Drawer>
       ) : (
-        <Drawer variant="permanent" anchor={isRTL ? "right" : "left"} sx={{ width: drawerWidth, flexShrink: 0, [`& .MuiDrawer-paper`]: { width: drawerWidth, boxSizing: "border-box" } }}>
+        // ✅ The permanent Drawer naturally occupies its width in the flex row.
+        //    No extra ml/mr needed on main — flex handles it.
+        <Drawer
+          variant="permanent"
+          anchor={isRTL ? "right" : "left"}
+          sx={{
+            width: drawerWidth,
+            flexShrink: 0,
+            [`& .MuiDrawer-paper`]: { width: drawerWidth, boxSizing: "border-box" },
+          }}
+        >
           {drawerContent}
         </Drawer>
       )}
 
-      <Box component="main" sx={{ flexGrow: 1, p: { xs: 2, md: 3 }, mt: 8, ml: !isMobile && !isRTL ? `${drawerWidth}px` : 0, mr: !isMobile && isRTL ? `${drawerWidth}px` : 0 }}>
+      {/*
+        ✅ KEY FIX:
+        - Removed ml/mr manual offsets entirely — the permanent Drawer
+          already takes up its space in the flex row, so main fills the rest.
+        - width: 0 + flexGrow: 1 is the correct pattern to make a flex child
+          fill remaining space without overflowing.
+        - overflow: hidden prevents any inner content from breaking the layout.
+      */}
+      <Box
+        component="main"
+        sx={{
+          flexGrow: 1,
+          width: 0,           // lets flexGrow take over without content pushing width wider
+          minHeight: "100vh",
+          mt: "64px",         // exact AppBar height (Toolbar default)
+          p: { xs: 2, md: 2.5 },
+          overflow: "hidden",
+        }}
+      >
         <Outlet />
       </Box>
     </Box>
