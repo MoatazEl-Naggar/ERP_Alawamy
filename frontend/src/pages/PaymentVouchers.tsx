@@ -273,7 +273,7 @@ export default function PaymentVouchers() {
               <Autocomplete fullWidth options={treasuries}
                 getOptionLabel={tr => tr.name} value={selTreasury}
                 onChange={(_, v) => setForm({ ...form, treasuryId: v?.id || "" })}
-                renderInput={params => <TextField {...params} label={t("treasury")} required />} />
+                renderInput={params => <TextField {...params} label={t("treasury")} />} />
             </Stack>
 
             {/* Row 3 — Shipment + Customer */}
