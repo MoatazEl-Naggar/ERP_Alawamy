@@ -151,6 +151,12 @@ model PurchaseInvoice {
   invoiceNumber String
   referenceNo   String?
   date          DateTime
+  containerNo    String?
+  clientCode     String?
+  creditDays     Int?
+  storeCode      String?
+  downPayment    Float?
+  headerDiscount Float?
   supplierId    String
   notes         String?
   createdAt     DateTime @default(now())
@@ -171,6 +177,13 @@ model PurchaseItem {
   unitPrice  Float    @default(0)
   qtyCartons Int?
   qtyUnits   Int?
+  itemCode       String?
+  category       String?
+  description    String?
+  itemNotes      String?
+  cartonNumber   String?
+  receivingDate  DateTime?
+  images         String[]
   price      Float?
   total      Float?
   cbm        Float?

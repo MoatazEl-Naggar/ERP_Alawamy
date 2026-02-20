@@ -4,15 +4,37 @@ export const createPurchaseInvoice = async (data: any) => {
   return prisma.purchaseInvoice.create({
     data: {
       invoiceNumber: data.invoiceNumber,
-      referenceNo: data.referenceNo,
-      date: new Date(data.date),
-      supplierId: data.supplierId,
-      notes: data.notes,
+      referenceNo:   data.referenceNo   || null,
+      date:          new Date(data.date),
+      supplierId:    data.supplierId,
+      notes:         data.notes         || null,
+      containerNo:   data.containerNo   || null,
+      clientCode:    data.clientCode    || null,
+      creditDays:    data.creditDays    ? Number(data.creditDays)    : null,
+      storeCode:     data.storeCode     || null,
+      downPayment:   data.downPayment   ? Number(data.downPayment)   : null,
+      headerDiscount:data.headerDiscount? Number(data.headerDiscount): null,
       items: {
-        create: data.items
+        create: (data.items ?? []).map((item: any) => ({
+          itemName:      item.itemCode  || item.itemName || "",
+          barcode:       item.barcode   || null,
+          qtyCartons:    item.qtyCartons ?? null,
+          qtyUnits:      item.qtyUnits   ?? null,
+          price:         item.price      ?? null,
+          total:         item.valueAfterDiscount ?? item.value ?? item.total ?? null,
+          cbm:           item.cbm        ?? null,
+          discount:      item.itemDiscount ?? null,
+          itemCode:      item.itemCode   || null,
+          category:      item.category   || null,
+          description:   item.description|| null,
+          itemNotes:     item.itemNotes  || null,
+          cartonNumber:  item.cartonNumber || null,
+          receivingDate: item.receivingDate ? new Date(item.receivingDate) : null,
+          images:        item.images     || [],
+        }))
       }
     },
-    include: { items: true }
+    include: { items: true, supplier: true }
   });
 };
 
