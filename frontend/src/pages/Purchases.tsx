@@ -36,7 +36,9 @@ interface PurchaseItem {
   images: string[];
 }
 
-interface Supplier { id: string; name: string; supplierNumber: string; }
+interface Supplier  { id: string; name: string; supplierNumber: string; }
+interface Customer  { id: string; name: string; customerNumber: string; }
+interface Container { id: string; containerNo: string; }
 
 interface PurchaseInvoice {
   id: string;
@@ -54,7 +56,7 @@ interface PurchaseInvoice {
   items: any[];
 }
 
-// ─── Factories ────────────────────────────────────────────────────────────────
+// ─── Factories ────────────────────��───────────────────────────────────────────
 const mkItem = (): PurchaseItem => ({
   barcode: "", itemCode: "", qtyCartons: 0, qtyUnits: 0, totalUnits: 0,
   category: "", price: 0, value: 0, itemDiscount: 0, valueAfterDiscount: 0,
@@ -95,6 +97,8 @@ export default function Purchases() {
 
   const [invoices,    setInvoices]    = useState<PurchaseInvoice[]>([]);
   const [suppliers,   setSuppliers]   = useState<Supplier[]>([]);
+  const [customers,   setCustomers]   = useState<Customer[]>([]);
+  const [containers,  setContainers]  = useState<Container[]>([]);
   const [form,        setForm]        = useState(mkForm());
   const [editingId,   setEditingId]   = useState<string | null>(null);
   const [draftItem,   setDraftItem]   = useState<PurchaseItem>(mkItem());
@@ -102,9 +106,12 @@ export default function Purchases() {
   const [snackbar,    setSnackbar]    = useState({ open: false, msg: "", sev: "success" as "success" | "error" | "warning" });
 
   // ── Data loading ────────────────────────────────────────────────────────────
-  const fetchInvoices  = async () => { const r = await api.get("/purchase-invoices"); setInvoices(r.data); };
-  const fetchSuppliers = async () => { const r = await api.get("/suppliers");          setSuppliers(r.data); };
-  useEffect(() => { fetchInvoices(); fetchSuppliers(); }, []);
+  const fetchInvoices   = async () => { const r = await api.get("/purchase-invoices"); setInvoices(r.data); };
+  const fetchSuppliers  = async () => { const r = await api.get("/suppliers");          setSuppliers(r.data); };
+  const fetchCustomers  = async () => { const r = await api.get("/customers");          setCustomers(r.data); };
+  const fetchContainers = async () => { const r = await api.get("/containers");         setContainers(r.data); };
+
+  useEffect(() => { fetchInvoices(); fetchSuppliers(); fetchCustomers(); fetchContainers(); }, []);
 
   const toast = (msg: string, sev: "success"|"error"|"warning" = "success") =>
     setSnackbar({ open: true, msg, sev });
@@ -128,7 +135,7 @@ export default function Purchases() {
     });
   };
 
-  // ── Add item row ───────────────────────────────────────────────���────────────
+  // ── Add item row ────────────────────────────────────────────────────────────
   const commitItem = () => {
     if (!draftItem.itemCode) { toast(t("itemCodeRequired"), "warning"); return; }
     setForm(f => ({ ...f, items: [...f.items, draftItem] }));
@@ -253,10 +260,9 @@ export default function Purchases() {
   };
 
   // ── Derived ─────────────────────────────────────────────────────────────────
-  const grandTotal     = form.items.reduce((s, i) => s + i.valueAfterDiscount, 0);
-  const totalCbm       = form.items.reduce((s, i) => s + (i.cbm || 0), 0);
-  const totalCartons   = form.items.reduce((s, i) => s + i.qtyCartons, 0);
-  const selSupplier    = suppliers.find(s => s.id === form.supplierId);
+  const grandTotal   = form.items.reduce((s, i) => s + i.valueAfterDiscount, 0);
+  const totalCbm     = form.items.reduce((s, i) => s + (i.cbm || 0), 0);
+  const totalCartons = form.items.reduce((s, i) => s + i.qtyCartons, 0);
 
   const filteredInvoices = invoices.filter(inv =>
     !searchTerm ||
@@ -296,24 +302,38 @@ export default function Purchases() {
             <Box sx={{ bgcolor: BLUE_LIGHT, borderRadius: 1, p: 1.5, mb: 2 }}>
               {sectionTitle(t("invoiceHeader"))}
               <Grid container spacing={1.5}>
+
+                {/* Invoice Number */}
                 <Grid item xs={6} sm={3}>
                   <TextField fullWidth size="small" label={t("invoiceNumber")}
                     value={form.invoiceNumber}
                     onChange={e => setForm(f => ({ ...f, invoiceNumber: e.target.value }))}
                     InputProps={{ sx: { fontWeight: 700, bgcolor: "#fff" } }} />
                 </Grid>
+
+                {/* Date */}
                 <Grid item xs={6} sm={3}>
                   <TextField fullWidth size="small" label={t("date")} type="date"
                     value={form.date} InputLabelProps={{ shrink: true }}
                     onChange={e => setForm(f => ({ ...f, date: e.target.value }))}
                     InputProps={{ sx: { bgcolor: "#fff" } }} />
                 </Grid>
+
+                {/* Container No — dropdown */}
                 <Grid item xs={6} sm={3}>
-                  <TextField fullWidth size="small" label={t("containerNo")}
+                  <TextField fullWidth size="small" select label={t("containerNo")}
+                    SelectProps={{ native: true }}
                     value={form.containerNo}
                     onChange={e => setForm(f => ({ ...f, containerNo: e.target.value }))}
-                    InputProps={{ sx: { bgcolor: "#fff" } }} />
+                    InputProps={{ sx: { bgcolor: "#fff" } }}>
+                    <option value="">—</option>
+                    {containers.map(c => (
+                      <option key={c.id} value={c.containerNo}>{c.containerNo}</option>
+                    ))}
+                  </TextField>
                 </Grid>
+
+                {/* Supplier — dropdown */}
                 <Grid item xs={6} sm={3}>
                   <TextField fullWidth size="small" select label={t("supplier")}
                     SelectProps={{ native: true }}
@@ -326,36 +346,61 @@ export default function Purchases() {
                     ))}
                   </TextField>
                 </Grid>
+
+                {/* Client Code — dropdown */}
                 <Grid item xs={6} sm={3}>
-                  <TextField fullWidth size="small" label={t("clientCode")}
+                  <TextField fullWidth size="small" select label={t("clientCode")}
+                    SelectProps={{ native: true }}
                     value={form.clientCode}
                     onChange={e => setForm(f => ({ ...f, clientCode: e.target.value }))}
+                    InputProps={{ sx: { bgcolor: "#fff" } }}>
+                    <option value="">—</option>
+                    {customers.map(c => (
+                      <option key={c.id} value={c.customerNumber}>{c.customerNumber} — {c.name}</option>
+                    ))}
+                  </TextField>
+                </Grid>
+
+                {/* Store Code */}
+                <Grid item xs={6} sm={2}>
+                  <TextField fullWidth size="small" label={t("storeCode")}
+                    value={form.storeCode}
+                    onChange={e => setForm(f => ({ ...f, storeCode: e.target.value }))}
                     InputProps={{ sx: { bgcolor: "#fff" } }} />
                 </Grid>
+
+                {/* Credit Days */}
                 <Grid item xs={6} sm={2}>
                   <TextField fullWidth size="small" label={t("creditDays")} type="number"
                     value={form.creditDays}
                     onChange={e => setForm(f => ({ ...f, creditDays: +e.target.value }))}
                     InputProps={{ sx: { bgcolor: "#fff" } }} />
                 </Grid>
+
+                {/* Down Payment */}
                 <Grid item xs={6} sm={2}>
                   <TextField fullWidth size="small" label={t("downPayment")} type="number"
                     value={form.downPayment}
                     onChange={e => setForm(f => ({ ...f, downPayment: +e.target.value }))}
                     InputProps={{ sx: { bgcolor: "#fff" } }} />
                 </Grid>
+
+                {/* Header Discount */}
                 <Grid item xs={6} sm={2}>
                   <TextField fullWidth size="small" label={t("headerDiscount")} type="number"
                     value={form.headerDiscount}
                     onChange={e => setForm(f => ({ ...f, headerDiscount: +e.target.value }))}
                     InputProps={{ sx: { bgcolor: "#fff" } }} />
                 </Grid>
+
+                {/* Notes */}
                 <Grid item xs={12} sm={6}>
                   <TextField fullWidth size="small" label={t("notes")}
                     value={form.notes}
                     onChange={e => setForm(f => ({ ...f, notes: e.target.value }))}
                     InputProps={{ sx: { bgcolor: "#fff" } }} />
                 </Grid>
+
               </Grid>
             </Box>
 
