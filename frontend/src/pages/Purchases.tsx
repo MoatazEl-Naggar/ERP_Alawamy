@@ -332,12 +332,6 @@ export default function Purchases() {
                     onChange={e => setForm(f => ({ ...f, clientCode: e.target.value }))}
                     InputProps={{ sx: { bgcolor: "#fff" } }} />
                 </Grid>
-                <Grid item xs={6} sm={3}>
-                  <TextField fullWidth size="small" label={t("storeCode")}
-                    value={form.storeCode}
-                    onChange={e => setForm(f => ({ ...f, storeCode: e.target.value }))}
-                    InputProps={{ sx: { bgcolor: "#fff" } }} />
-                </Grid>
                 <Grid item xs={6} sm={2}>
                   <TextField fullWidth size="small" label={t("creditDays")} type="number"
                     value={form.creditDays}
