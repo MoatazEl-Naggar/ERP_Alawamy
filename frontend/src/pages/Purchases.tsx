@@ -22,10 +22,10 @@ interface PurchaseItem {
   itemCode: string;
   qtyCartons: number;
   qtyUnits: number;
-  totalUnits: number;       // qtyCartons × qtyUnits
+  totalUnits: number;
   category: string;
   price: number;
-  value: number;            // totalUnits × price
+  value: number;
   itemDiscount: number;
   valueAfterDiscount: number;
   description: string;
@@ -36,9 +36,10 @@ interface PurchaseItem {
   images: string[];
 }
 
-interface Supplier  { id: string; name: string; supplierNumber: string; }
-interface Customer  { id: string; name: string; customerNumber: string; }
-interface Container { id: string; containerNo: string; }
+interface Supplier    { id: string; name: string; supplierNumber: string; }
+interface Customer    { id: string; name: string; customerNumber: string; }
+// ✅ FIX: use containerNumber to match DB/API response
+interface Container   { id: string; containerNumber: string; }
 
 interface PurchaseInvoice {
   id: string;
@@ -56,7 +57,7 @@ interface PurchaseInvoice {
   items: any[];
 }
 
-// ─── Factories ────────────────────��───────────────────────────────────────────
+// ─── Factories ────────────────────────────────────────────────────────────────
 const mkItem = (): PurchaseItem => ({
   barcode: "", itemCode: "", qtyCartons: 0, qtyUnits: 0, totalUnits: 0,
   category: "", price: 0, value: 0, itemDiscount: 0, valueAfterDiscount: 0,
@@ -79,10 +80,10 @@ const mkForm = () => ({
 });
 
 // ─── Styles ───────────────────────────────────────────────────────────────────
-const BLUE      = "#1565C0";
+const BLUE       = "#1565C0";
 const BLUE_LIGHT = "#E3F2FD";
-const tblHead   = { bgcolor: BLUE, "& .MuiTableCell-root": { color: "#fff", fontWeight: 700, fontSize: "0.72rem", py: 1, px: 0.75, whiteSpace: "nowrap" } };
-const tblCell   = { fontSize: "0.75rem", py: 0.6, px: 0.75, borderBottom: "1px solid #BBDEFB" };
+const tblHead    = { bgcolor: BLUE, "& .MuiTableCell-root": { color: "#fff", fontWeight: 700, fontSize: "0.72rem", py: 1, px: 0.75, whiteSpace: "nowrap" } };
+const tblCell    = { fontSize: "0.75rem", py: 0.6, px: 0.75, borderBottom: "1px solid #BBDEFB" };
 const sectionTitle = (label: string) => (
   <Typography variant="caption" sx={{ fontWeight: 700, color: BLUE, textTransform: "uppercase", letterSpacing: 1, mb: 0.5, display: "block" }}>
     {label}
@@ -93,11 +94,11 @@ const sectionTitle = (label: string) => (
 export default function Purchases() {
   const { t } = useTranslation();
   const fileInputRef   = useRef<HTMLInputElement>(null);
-  const searchInputRef = useRef<HTMLInputElement>(null);
 
   const [invoices,    setInvoices]    = useState<PurchaseInvoice[]>([]);
   const [suppliers,   setSuppliers]   = useState<Supplier[]>([]);
   const [customers,   setCustomers]   = useState<Customer[]>([]);
+  // ✅ FIX: typed with containerNumber
   const [containers,  setContainers]  = useState<Container[]>([]);
   const [form,        setForm]        = useState(mkForm());
   const [editingId,   setEditingId]   = useState<string | null>(null);
@@ -105,37 +106,39 @@ export default function Purchases() {
   const [searchTerm,  setSearchTerm]  = useState("");
   const [snackbar,    setSnackbar]    = useState({ open: false, msg: "", sev: "success" as "success" | "error" | "warning" });
 
-  // ── Data loading ────────────────────────────────────────────────────────────
+  // ── Data loading ─────────────────────────────────────────────────────────────
   const fetchInvoices   = async () => { const r = await api.get("/purchase-invoices"); setInvoices(r.data); };
-  const fetchSuppliers  = async () => { const r = await api.get("/suppliers");          setSuppliers(r.data); };
-  const fetchCustomers  = async () => { const r = await api.get("/customers");          setCustomers(r.data); };
-  const fetchContainers = async () => { const r = await api.get("/containers");         setContainers(r.data); };
-
+  const fetchSuppliers  = async () => { const r = await api.get("/suppliers");         setSuppliers(r.data); };
+  const fetchCustomers  = async () => { const r = await api.get("/customers");         setCustomers(r.data); };
+  const fetchContainers = async () => { const r = await api.get("/containers");        setContainers(r.data); };
   useEffect(() => { fetchInvoices(); fetchSuppliers(); fetchCustomers(); fetchContainers(); }, []);
 
-  const toast = (msg: string, sev: "success"|"error"|"warning" = "success") =>
+  const toast = (msg: string, sev: "success" | "error" | "warning" = "success") =>
     setSnackbar({ open: true, msg, sev });
 
-  // ── Auto-generate invoice number when containerNo changes ───────────────────
+  // ✅ FIX: Auto-generate invoice number using containerNumber from selected container
   useEffect(() => {
     if (form.containerNo && !editingId) {
+      // find the selected container and use its containerNumber
+      const selected = containers.find(c => c.id === form.containerNo);
+      const containerNum = selected?.containerNumber || form.containerNo;
       const seq = (invoices.length + 1).toString().padStart(5, "0");
-      setForm(f => ({ ...f, invoiceNumber: `${f.containerNo}-${seq}` }));
+      setForm(f => ({ ...f, invoiceNumber: `${containerNum}-${seq}` }));
     }
-  }, [form.containerNo]);
+  }, [form.containerNo, containers]);
 
-  // ── Draft item auto-calc ────────────────────────────────────────────────────
+  // ─��� Draft item auto-calc ─────────────────────────────────────────────────────
   const patchItem = (patch: Partial<PurchaseItem>) => {
     setDraftItem(prev => {
       const next = { ...prev, ...patch };
-      next.totalUnits          = next.qtyCartons * next.qtyUnits;
-      next.value               = next.totalUnits * next.price;
-      next.valueAfterDiscount  = next.value - next.itemDiscount;
+      next.totalUnits         = next.qtyCartons * next.qtyUnits;
+      next.value              = next.totalUnits * next.price;
+      next.valueAfterDiscount = next.value - next.itemDiscount;
       return next;
     });
   };
 
-  // ── Add item row ────────────────────────────────────────────────────────────
+  // ── Add item row ─────────────────────────────────────────────────────────────
   const commitItem = () => {
     if (!draftItem.itemCode) { toast(t("itemCodeRequired"), "warning"); return; }
     setForm(f => ({ ...f, items: [...f.items, draftItem] }));
@@ -145,7 +148,7 @@ export default function Purchases() {
   const removeItem = (idx: number) =>
     setForm(f => ({ ...f, items: f.items.filter((_, i) => i !== idx) }));
 
-  // ── Images ──────────────────────────────────────────────────────────────────
+  // ── Images ───────────────────────────────────────────────────────────────────
   const handleImages = (files: FileList | null) => {
     if (!files) return;
     Promise.all(
@@ -157,13 +160,13 @@ export default function Purchases() {
     ).then(imgs => patchItem({ images: [...draftItem.images, ...imgs] }));
   };
 
-  // ── CRUD ────────────────────────────────────────────────────────────────────
+  // ── CRUD ─────────────────────────────────────────────────────────────────────
   const handleNew = () => { setForm(mkForm()); setDraftItem(mkItem()); setEditingId(null); };
 
   const handleSave = async () => {
-    if (!form.supplierId)       { toast(t("supplierRequired"), "warning"); return; }
-    if (!form.invoiceNumber)    { toast(t("invoiceNumberRequired"), "warning"); return; }
-    if (form.items.length === 0){ toast(t("itemsRequired"), "warning"); return; }
+    if (!form.supplierId)        { toast(t("supplierRequired"), "warning"); return; }
+    if (!form.invoiceNumber)     { toast(t("invoiceNumberRequired"), "warning"); return; }
+    if (form.items.length === 0) { toast(t("itemsRequired"), "warning"); return; }
     try {
       if (editingId) {
         await api.put(`/purchase-invoices/${editingId}`, form);
@@ -181,15 +184,15 @@ export default function Purchases() {
     setForm({
       date:           inv.date?.split("T")[0] ?? "",
       invoiceNumber:  inv.invoiceNumber,
-      containerNo:    inv.containerNo  ?? "",
-      clientCode:     inv.clientCode   ?? "",
-      storeCode:      inv.storeCode    ?? "",
-      creditDays:     inv.creditDays   ?? 30,
-      downPayment:    inv.downPayment  ?? 0,
+      containerNo:    inv.containerNo   ?? "",
+      clientCode:     inv.clientCode    ?? "",
+      storeCode:      inv.storeCode     ?? "",
+      creditDays:     inv.creditDays    ?? 30,
+      downPayment:    inv.downPayment   ?? 0,
       headerDiscount: inv.headerDiscount ?? 0,
-      notes:          inv.notes        ?? "",
+      notes:          inv.notes         ?? "",
       supplierId:     inv.supplierId,
-      items:          inv.items        ?? [],
+      items:          inv.items         ?? [],
     });
     setEditingId(inv.id);
     setDraftItem(mkItem());
@@ -205,20 +208,22 @@ export default function Purchases() {
     } catch { toast(t("invoiceDeleteError"), "error"); }
   };
 
-  // ── Print ───────────────────────────────────────────────────────────────────
+  // ── Print ────────────────────────────────────────────────────────────────────
   const handlePrint = () => {
     const w = window.open("", "", "width=1000,height=700");
     if (!w) return;
     const rows = form.items.map((it, i) => `
       <tr>
-        <td>${i + 1}</td><td>${it.itemCode}</td><td>${it.barcode||"-"}</td>
-        <td>${it.cartonNumber||"-"}</td><td>${it.qtyCartons}</td><td>${it.qtyUnits}</td>
-        <td>${it.totalUnits}</td><td>${it.category||"-"}</td>
+        <td>${i + 1}</td><td>${it.itemCode}</td><td>${it.barcode || "-"}</td>
+        <td>${it.cartonNumber || "-"}</td><td>${it.qtyCartons}</td><td>${it.qtyUnits}</td>
+        <td>${it.totalUnits}</td><td>${it.category || "-"}</td>
         <td>${it.price.toLocaleString()}</td><td>${it.value.toLocaleString()}</td>
-        <td>${it.itemDiscount||0}</td><td>${it.valueAfterDiscount.toLocaleString()}</td>
-        <td>${it.cbm||"-"}</td><td>${it.receivingDate||"-"}</td><td>${it.itemNotes||"-"}</td>
+        <td>${it.itemDiscount || 0}</td><td>${it.valueAfterDiscount.toLocaleString()}</td>
+        <td>${it.cbm || "-"}</td><td>${it.receivingDate || "-"}</td><td>${it.itemNotes || "-"}</td>
       </tr>`).join("");
     const grandTotal = form.items.reduce((s, i) => s + i.valueAfterDiscount, 0);
+    // ✅ FIX: display the container's number in print, not its ID
+    const containerLabel = containers.find(c => c.id === form.containerNo)?.containerNumber || form.containerNo || "-";
     w.document.write(`<html><head><title>${t("purchasesTitle")}</title>
       <style>
         body{font-family:Arial;direction:rtl;padding:20px;font-size:12px}
@@ -235,12 +240,12 @@ export default function Purchases() {
       <div class="header">
         <span><b>${t("invoiceNumber")}:</b> ${form.invoiceNumber}</span>
         <span><b>${t("date")}:</b> ${form.date}</span>
-        <span><b>${t("containerNo")}:</b> ${form.containerNo||"-"}</span>
-        <span><b>${t("supplier")}:</b> ${suppliers.find(s=>s.id===form.supplierId)?.name||"-"}</span>
-        <span><b>${t("clientCode")}:</b> ${form.clientCode||"-"}</span>
-        <span><b>${t("storeCode")}:</b> ${form.storeCode||"-"}</span>
+        <span><b>${t("containerNo")}:</b> ${containerLabel}</span>
+        <span><b>${t("supplier")}:</b> ${suppliers.find(s => s.id === form.supplierId)?.name || "-"}</span>
+        <span><b>${t("clientCode")}:</b> ${customers.find(c => c.id === form.clientCode)?.name || form.clientCode || "-"}</span>
+        <span><b>${t("storeCode")}:</b> ${form.storeCode || "-"}</span>
         <span><b>${t("creditDays")}:</b> ${form.creditDays}</span>
-        <span><b>${t("downPayment")}:</b> ${form.downPayment||0}</span>
+        <span><b>${t("downPayment")}:</b> ${form.downPayment || 0}</span>
       </div>
       <table>
         <thead><tr>
@@ -259,7 +264,7 @@ export default function Purchases() {
     w.document.close(); w.print();
   };
 
-  // ── Derived ─────────────────────────────────────────────────────────────────
+  // ── Derived ──────────────────────────────────────────────────────────────────
   const grandTotal   = form.items.reduce((s, i) => s + i.valueAfterDiscount, 0);
   const totalCbm     = form.items.reduce((s, i) => s + (i.cbm || 0), 0);
   const totalCartons = form.items.reduce((s, i) => s + i.qtyCartons, 0);
@@ -270,7 +275,7 @@ export default function Purchases() {
     inv.supplier?.name?.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
-  // ─── Render ─────────────────────────────────────────────────────────────────
+  // ─── Render ──────────────────────────────────────────────────────────────────
   return (
     <Box sx={{ p: { xs: 1, md: 2 } }}>
       {/* ══ Page Header ══════════════════════════════════════════════════════ */}
@@ -292,9 +297,7 @@ export default function Purchases() {
       </Stack>
 
       <Grid container spacing={2}>
-        {/* ══════════════════════════════════════════════════════════════════
-            LEFT PANEL — Form
-        ══════════════════════════════════════════════════════════════════ */}
+        {/* ══ LEFT PANEL — Form ══════════════════════════════════════════════ */}
         <Grid item xs={12} lg={8}>
           <Paper elevation={2} sx={{ p: 2, borderTop: `4px solid ${BLUE}`, borderRadius: 2 }}>
 
@@ -319,7 +322,7 @@ export default function Purchases() {
                     InputProps={{ sx: { bgcolor: "#fff" } }} />
                 </Grid>
 
-                {/* Container No — dropdown */}
+                {/* ✅ FIX: Container dropdown using containerNumber */}
                 <Grid item xs={6} sm={3}>
                   <TextField fullWidth size="small" select label={t("containerNo")}
                     SelectProps={{ native: true }}
@@ -328,12 +331,14 @@ export default function Purchases() {
                     InputProps={{ sx: { bgcolor: "#fff" } }}>
                     <option value="">—</option>
                     {containers.map(c => (
-                      <option key={c.id} value={c.containerNo}>{c.containerNo}</option>
+                      <option key={c.id} value={c.id}>
+                        {c.containerNumber}  {/* ✅ was c.containerNo — now uses correct field */}
+                      </option>
                     ))}
                   </TextField>
                 </Grid>
 
-                {/* Supplier — dropdown */}
+                {/* Supplier */}
                 <Grid item xs={6} sm={3}>
                   <TextField fullWidth size="small" select label={t("supplier")}
                     SelectProps={{ native: true }}
@@ -347,7 +352,7 @@ export default function Purchases() {
                   </TextField>
                 </Grid>
 
-                {/* Client Code — dropdown */}
+                {/* ✅ FIX: Client Code — dropdown of customers */}
                 <Grid item xs={6} sm={3}>
                   <TextField fullWidth size="small" select label={t("clientCode")}
                     SelectProps={{ native: true }}
@@ -356,17 +361,9 @@ export default function Purchases() {
                     InputProps={{ sx: { bgcolor: "#fff" } }}>
                     <option value="">—</option>
                     {customers.map(c => (
-                      <option key={c.id} value={c.customerNumber}>{c.customerNumber} — {c.name}</option>
+                      <option key={c.id} value={c.id}>{c.customerNumber} — {c.name}</option>
                     ))}
                   </TextField>
-                </Grid>
-
-                {/* Store Code */}
-                <Grid item xs={6} sm={2}>
-                  <TextField fullWidth size="small" label={t("storeCode")}
-                    value={form.storeCode}
-                    onChange={e => setForm(f => ({ ...f, storeCode: e.target.value }))}
-                    InputProps={{ sx: { bgcolor: "#fff" } }} />
                 </Grid>
 
                 {/* Credit Days */}
@@ -404,7 +401,7 @@ export default function Purchases() {
               </Grid>
             </Box>
 
-            {/* ── Section 2: Item Entry ──────────────────────────────────── */}
+            {/* ── Section 2: Item Entry ────────────────────────────────── */}
             <Box sx={{ bgcolor: "#FAFAFA", border: "1px solid #E0E0E0", borderRadius: 1, p: 1.5, mb: 1.5 }}>
               {sectionTitle(t("addItem"))}
               <Grid container spacing={1} alignItems="flex-end">
@@ -478,7 +475,7 @@ export default function Purchases() {
               </Grid>
             </Box>
 
-            {/* ── Section 3: Items Table ─────────────────────────────────── */}
+            {/* ── Section 3: Items Table ───────────────────────────────── */}
             <Box sx={{ overflowX: "auto", mb: 1.5 }}>
               <Table size="small" sx={{ minWidth: 860 }}>
                 <TableHead sx={tblHead}>
@@ -512,7 +509,7 @@ export default function Purchases() {
                     <TableRow key={idx} sx={{ bgcolor: idx % 2 === 0 ? BLUE_LIGHT : "#fff", "&:hover": { bgcolor: "#BBDEFB" } }}>
                       <TableCell sx={tblCell} align="center">{idx + 1}</TableCell>
                       <TableCell sx={tblCell}>
-                        {it.images.length > 0
+                        {it.images?.length > 0
                           ? <Tooltip title={`${it.images.length} ${t("image")}`}>
                               <img src={it.images[0]} alt="" style={{ width: 32, height: 32, objectFit: "cover", borderRadius: 4, cursor: "pointer" }} />
                             </Tooltip>
@@ -524,10 +521,10 @@ export default function Purchases() {
                       <TableCell sx={tblCell} align="center">{it.qtyUnits}</TableCell>
                       <TableCell sx={{ ...tblCell, fontWeight: 600 }} align="center">{it.totalUnits}</TableCell>
                       <TableCell sx={tblCell}>{it.category}</TableCell>
-                      <TableCell sx={tblCell} align="right">{it.price.toLocaleString()}</TableCell>
-                      <TableCell sx={tblCell} align="right">{it.value.toLocaleString()}</TableCell>
+                      <TableCell sx={tblCell} align="right">{it.price?.toLocaleString()}</TableCell>
+                      <TableCell sx={tblCell} align="right">{it.value?.toLocaleString()}</TableCell>
                       <TableCell sx={{ ...tblCell, color: "error.main" }} align="right">{it.itemDiscount || "—"}</TableCell>
-                      <TableCell sx={{ ...tblCell, fontWeight: 700, color: "#2E7D32" }} align="right">{it.valueAfterDiscount.toLocaleString()}</TableCell>
+                      <TableCell sx={{ ...tblCell, fontWeight: 700, color: "#2E7D32" }} align="right">{it.valueAfterDiscount?.toLocaleString()}</TableCell>
                       <TableCell sx={tblCell} align="right">{it.cbm || "—"}</TableCell>
                       <TableCell sx={tblCell}>{it.receivingDate || "—"}</TableCell>
                       <TableCell sx={tblCell}>{it.itemNotes || "—"}</TableCell>
@@ -542,7 +539,7 @@ export default function Purchases() {
               </Table>
             </Box>
 
-            {/* ── Section 4: Summary Footer ──────────────────────────────── */}
+            {/* ── Section 4: Summary Footer ────────────────────────────── */}
             {form.items.length > 0 && (
               <Box sx={{ bgcolor: BLUE, borderRadius: 1, p: 1.5, mb: 2 }}>
                 <Grid container spacing={2} justifyContent="flex-end">
@@ -573,7 +570,7 @@ export default function Purchases() {
               </Box>
             )}
 
-            {/* ── Action Toolbar ─────────────────────────────────────────── */}
+            {/* ── Action Toolbar ───────────────────────────────────────── */}
             <Stack direction="row" spacing={1} flexWrap="wrap" justifyContent="center">
               <Button variant="contained" startIcon={<AddIcon />} onClick={handleNew}
                 sx={{ bgcolor: "#43A047" }}>{t("newInvoice")}</Button>
@@ -587,9 +584,7 @@ export default function Purchases() {
           </Paper>
         </Grid>
 
-        {/* ══════════════════════════════════════════════════════════════════
-            RIGHT PANEL — Invoices List
-        ══════════════════════════════════════════════════════════════════ */}
+        {/* ══ RIGHT PANEL — Invoices List ════════════════════════════════════ */}
         <Grid item xs={12} lg={4}>
           <Paper elevation={2} sx={{ p: 2, borderTop: `4px solid #43A047`, borderRadius: 2, height: "100%" }}>
             <Typography variant="subtitle1" fontWeight={700} color="#2E7D32" sx={{ mb: 1.5 }}>
@@ -637,7 +632,10 @@ export default function Purchases() {
                         <Chip size="small" label={`${inv.items?.length || 0} ${t("items")}`}
                           color="primary" variant="outlined" sx={{ height: 18, fontSize: "0.65rem" }} />
                         {inv.containerNo && (
-                          <Chip size="small" label={inv.containerNo} sx={{ height: 18, fontSize: "0.65rem", bgcolor: "#E3F2FD" }} />
+                          // ✅ FIX: resolve container name from containers list
+                          <Chip size="small"
+                            label={containers.find(c => c.id === inv.containerNo)?.containerNumber || inv.containerNo}
+                            sx={{ height: 18, fontSize: "0.65rem", bgcolor: "#E3F2FD" }} />
                         )}
                       </Stack>
                     </Box>

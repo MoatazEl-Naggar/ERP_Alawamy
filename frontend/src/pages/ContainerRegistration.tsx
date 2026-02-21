@@ -19,14 +19,14 @@ import { useTranslation } from "react-i18next";
 
 interface Container {
   id?: string;
-  containerNo: string;
+  containerNumber: string; // ← was "containerNo", now matches DB field
   date: string;
   notes?: string;
 }
 
 export default function ContainerRegistration() {
   const initialForm: Container = {
-    containerNo: "",
+    containerNumber: "", // ← was "containerNo"
     date: "",
     notes: ""
   };
@@ -51,7 +51,6 @@ export default function ContainerRegistration() {
     } else {
       await api.post("/containers", form);
     }
-
     setOpen(false);
     setForm(initialForm);
     fetchContainers();
@@ -100,13 +99,17 @@ export default function ContainerRegistration() {
         <TableBody>
           {containers.map((container) => (
             <TableRow key={container.id}>
-              <TableCell>{container.containerNo}</TableCell>
-              <TableCell>{new Date(container.date).toLocaleDateString()}</TableCell>
+              <TableCell>{container.containerNumber}</TableCell> {/* ← was containerNo */}
+              <TableCell>
+                {container.date ? new Date(container.date).toLocaleDateString() : "—"}
+              </TableCell>
               <TableCell>{container.notes || "-"}</TableCell>
               <TableCell>
                 <Stack direction="row" spacing={1}>
                   <Button onClick={() => handleEdit(container)}>{t("edit")}</Button>
-                  <Button color="error" onClick={() => handleDelete(container.id!)}>{t("delete")}</Button>
+                  <Button color="error" onClick={() => handleDelete(container.id!)}>
+                    {t("delete")}
+                  </Button>
                 </Stack>
               </TableCell>
             </TableRow>
@@ -121,14 +124,15 @@ export default function ContainerRegistration() {
             label={t("containerNumber")}
             fullWidth
             margin="dense"
-            value={form.containerNo}
-            onChange={(e) => setForm({ ...form, containerNo: e.target.value })}
+            value={form.containerNumber} // ← was form.containerNo
+            onChange={(e) => setForm({ ...form, containerNumber: e.target.value })} // ← was containerNo
           />
           <TextField
             label={t("date")}
             type="date"
             fullWidth
             margin="dense"
+            InputLabelProps={{ shrink: true }}
             value={form.date}
             onChange={(e) => setForm({ ...form, date: e.target.value })}
           />
@@ -136,8 +140,6 @@ export default function ContainerRegistration() {
             label={t("notes")}
             fullWidth
             margin="dense"
-            multiline
-            rows={2}
             value={form.notes || ""}
             onChange={(e) => setForm({ ...form, notes: e.target.value })}
           />
