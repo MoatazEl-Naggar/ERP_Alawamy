@@ -147,22 +147,22 @@ model Currency {
 }
 
 model PurchaseInvoice {
-  id            String   @id @default(uuid())
-  invoiceNumber String
-  referenceNo   String?
-  date          DateTime
+  id             String   @id @default(uuid())
+  invoiceNumber  String
+  referenceNo    String?
+  date           DateTime
+  supplierId     String
+  notes          String?
   containerNo    String?
   clientCode     String?
   creditDays     Int?
   storeCode      String?
   downPayment    Float?
   headerDiscount Float?
-  supplierId    String
-  notes         String?
-  createdAt     DateTime @default(now())
+  createdAt      DateTime @default(now())
 
   supplier   Supplier           @relation(fields: [supplierId], references: [id], onDelete: Restrict)
-  items      PurchaseItem[]
+  items      PurchaseItem[]          // ← must match model name exactly
   receivings ReceivingInvoice[]
 
   @@unique([invoiceNumber, supplierId])

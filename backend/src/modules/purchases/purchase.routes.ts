@@ -19,4 +19,25 @@ router.get(
   controller.getInvoices
 );
 
+router.get(
+  "/purchase-invoices/:id",
+  authenticate,
+  checkPermission("PURCHASES", "view"),
+  controller.getInvoiceById
+);
+
+router.put(
+  "/purchase-invoices/:id",
+  authenticate,
+  checkPermission("PURCHASES", "edit"),
+  controller.updateInvoice
+);
+
+router.delete(
+  "/purchase-invoices/:id",
+  authenticate,
+  checkPermission("PURCHASES", "delete"),
+  controller.deleteInvoice
+);
+
 export default router;
